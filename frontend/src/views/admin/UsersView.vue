@@ -1,5 +1,68 @@
 <template>
   <AppLayout>
+    <div class="px-6 pt-6 pb-2 space-y-4">
+      <!-- FRS V3.0 四级控制层架构概览 Banner (苹果高级灰白配色风格) -->
+      <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-slate-200/80 dark:border-dark-700 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-dark-700 pb-4">
+          <div>
+            <div class="inline-flex items-center space-x-2 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 px-3.5 py-1 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-900/60">
+              <span>⚡ FRS V3.0 四级多租户与 RBAC 架构</span>
+            </div>
+            <h1 class="text-2xl font-black tracking-tight text-slate-900 dark:text-white mt-2">四级控制层用户与权限体系</h1>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">支撑【1. 平台顶级控制层】、【2. 渠道代理商】、【3. 企业/组织租户】与【4. 终端使用者/Key 层】的数据隔离与权责划分。</p>
+          </div>
+          
+          <div class="flex items-center space-x-2 text-xs">
+            <router-link to="/demo/agent" class="px-3.5 py-2 bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 text-amber-700 dark:text-amber-300 border border-amber-200/80 dark:border-amber-900/60 rounded-xl font-bold transition-all flex items-center gap-1.5 shadow-2xs">
+              <span>🤝 体验渠道代理控制台</span>
+            </router-link>
+            <router-link to="/demo/tenant" class="px-3.5 py-2 bg-blue-50 dark:bg-blue-950/50 hover:bg-blue-100 text-blue-700 dark:text-blue-300 border border-blue-200/80 dark:border-blue-900/60 rounded-xl font-bold transition-all flex items-center gap-1.5 shadow-2xs">
+              <span>🏢 体验企业租户控制台</span>
+            </router-link>
+          </div>
+        </div>
+
+        <!-- 4 级控制层统计卡片 Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-1">
+          <div class="bg-slate-50 dark:bg-dark-900 p-4 rounded-2xl border border-slate-200/60 dark:border-dark-700">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-medium">
+              <span>1. 平台顶级控制层</span>
+              <span class="text-xs">👑</span>
+            </div>
+            <div class="text-xl font-black text-slate-900 dark:text-white mt-1">1 <span class="text-xs font-normal text-slate-400">位系统超管</span></div>
+            <div class="text-[10px] text-blue-600 dark:text-blue-400 font-bold mt-0.5">全局号池 & 算分引擎</div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-dark-900 p-4 rounded-2xl border border-slate-200/60 dark:border-dark-700">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-medium">
+              <span>2. 渠道代理商控制层</span>
+              <span class="text-xs">🤝</span>
+            </div>
+            <div class="text-xl font-black text-amber-600 dark:text-amber-400 mt-1">12 <span class="text-xs font-normal text-slate-400">家加盟代理</span></div>
+            <div class="text-[10px] text-amber-600 dark:text-amber-400 font-bold mt-0.5">绑定专属号池 & 阶梯分账</div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-dark-900 p-4 rounded-2xl border border-slate-200/60 dark:border-dark-700">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-medium">
+              <span>3. 企业/组织租户层</span>
+              <span class="text-xs">🏢</span>
+            </div>
+            <div class="text-xl font-black text-blue-600 dark:text-blue-400 mt-1">48 <span class="text-xs font-normal text-slate-400">个企业团队</span></div>
+            <div class="text-[10px] text-blue-600 dark:text-blue-400 font-bold mt-0.5">部门子账号 & 充值额度</div>
+          </div>
+
+          <div class="bg-slate-50 dark:bg-dark-900 p-4 rounded-2xl border border-slate-200/60 dark:border-dark-700">
+            <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center justify-between font-medium">
+              <span>4. 终端 Key 使用者</span>
+              <span class="text-xs">👤</span>
+            </div>
+            <div class="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">1,280 <span class="text-xs font-normal text-slate-400">个活跃 API Key</span></div>
+            <div class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold mt-0.5">限流熔断 & 消费日志</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <TablePageLayout>
       <!-- Single Row: Search, Filters, and Actions -->
       <template #filters>
@@ -22,14 +85,16 @@
               />
             </div>
 
-            <!-- Role Filter (visible when enabled) -->
-            <div v-if="visibleFilters.has('role')" class="w-full sm:w-32">
+            <!-- Role Filter (支持 FRS V3.0 四级 RBAC 角色过滤) -->
+            <div v-if="visibleFilters.has('role')" class="w-full sm:w-44">
               <Select
                 v-model="filters.role"
                 :options="[
-                  { value: '', label: t('admin.users.allRoles') },
-                  { value: 'admin', label: t('admin.users.admin') },
-                  { value: 'user', label: t('admin.users.user') }
+                  { value: '', label: '全部 4 级角色' },
+                  { value: 'admin', label: '👑 平台超管 (SuperAdmin)' },
+                  { value: 'agent', label: '🤝 渠道代理商 (AgentPartner)' },
+                  { value: 'tenant_admin', label: '🏢 企业租户管理员 (TenantAdmin)' },
+                  { value: 'user', label: '👤 终端 Key 用户 (EndUser)' }
                 ]"
                 @change="applyFilter"
               />

@@ -9,14 +9,16 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 
 const portalLinks = [
-  { path: '/demo/portal', label: '官网门户', icon: '🌐', color: 'bg-blue-500' },
+  { path: '/admin', label: '平台中台', icon: '👑', color: 'bg-indigo-600' },
+  { path: '/demo/agent', label: '渠道代理', icon: '🤝', color: 'bg-amber-500' },
   { path: '/demo/tenant', label: '企业租户', icon: '🏢', color: 'bg-slate-700' },
-  { path: '/demo/agent', label: '渠道代理', icon: '💎', color: 'bg-amber-500' },
+  { path: '/demo/portal', label: '官网/对话', icon: '🌐', color: 'bg-blue-500' },
   { path: '/demo/desktop', label: '桌面客户端', icon: '🖥️', color: 'bg-indigo-500' },
 ]
 
 const currentPortal = computed(() => {
   const path = route.path
+  if (path.startsWith('/admin')) return '/admin'
   if (path.startsWith('/demo/portal')) return '/demo/portal'
   if (path.startsWith('/demo/tenant')) return '/demo/tenant'
   if (path.startsWith('/demo/agent')) return '/demo/agent'
