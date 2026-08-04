@@ -1,0 +1,42 @@
+server:
+  host: "127.0.0.1"
+  port: 8080
+  mode: "debug"
+  enable_server_timing: false
+  frontend_url: "http://127.0.0.1:3000"
+
+run_mode: "standard"
+
+database:
+  host: "127.0.0.1"
+  port: 5432
+  user: "niuzhidao"
+  password: ""
+  dbname: "sub2api"
+  sslmode: "disable"
+  max_open_conns: 50
+  max_idle_conns: 10
+  conn_max_lifetime_minutes: 30
+  conn_max_idle_time_minutes: 5
+
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  username: ""
+  password: ""
+  db: 0
+  pool_size: 100
+  min_idle_conns: 10
+  enable_tls: false
+
+jwt:
+  secret: "s2a_secure_jwt_secret_sub2api_2026_dev_key"
+  expire_hour: 24
+  access_token_expire_minutes: 0
+
+totp:
+  encryption_key: "8f3d6a9e1b2c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e"
+
+security:
+  url_allowlist:
+    enabled: false

@@ -351,6 +351,9 @@
           </div>
         </div>
 
+        <!-- NEW DEMO CENTER -->
+        <DemoCenterSection />
+
         <!-- Supported Providers -->
         <div class="mb-8 text-center">
           <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
@@ -480,6 +483,7 @@ import { useAuthStore, useAppStore } from '@/stores'
 import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 import { sanitizeUrl } from '@/utils/url'
+import DemoCenterSection from '@/demo/components/DemoCenterSection.vue'
 
 const { t } = useI18n()
 

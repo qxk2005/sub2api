@@ -78,6 +78,7 @@ watch(
       subscriptionStore.fetchActiveSubscriptions().catch((error) => {
         console.error('Failed to preload subscriptions:', error)
       })
+
       subscriptionStore.startPolling()
 
       // Announcements: new login vs page refresh restore
@@ -139,7 +140,9 @@ onMounted(async () => {
 <template>
   <NavigationProgress />
   <RouterView />
+
   <Toast />
   <AnnouncementPopup />
   <AdminComplianceDialog />
 </template>
+

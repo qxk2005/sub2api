@@ -21,8 +21,18 @@
         </div>
       </div>
 
-      <!-- Right: Announcements + Docs + Language + Subscriptions + Balance + User Dropdown -->
+      <!-- Right: Return Home + Announcements + Docs + Language + Subscriptions + Balance + User Dropdown -->
       <div class="flex min-w-0 items-center gap-1 sm:gap-3">
+        <!-- Return Home / Demo Center Entry -->
+        <router-link
+          to="/home"
+          class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 transition-colors shadow-xs"
+          title="返回控制台首页重新选择入口"
+        >
+          <span>🏠</span>
+          <span class="hidden sm:inline">返回控制台首页</span>
+        </router-link>
+
         <!-- Announcement Bell -->
         <AnnouncementBell v-if="user" />
 

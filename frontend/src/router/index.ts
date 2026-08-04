@@ -13,6 +13,7 @@ import { useRoutePrefetch } from '@/composables/useRoutePrefetch'
 import { getSetupStatus } from '@/api/setup'
 import { resolveCompletedSetupRedirectPath } from './setupRedirect'
 import { resolveRouteDocumentTitle } from './title'
+import demoRoutes from '@/demo/router'
 
 /**
  * Route definitions with lazy loading
@@ -701,6 +702,9 @@ const routes: RouteRecordRaw[] = [
       requiresPayment: true
     }
   },
+
+  // ==================== Demo Routes ====================
+  ...demoRoutes,
 
   // ==================== 404 Not Found ====================
   {

@@ -1,6 +1,22 @@
 <template>
   <AppLayout>
     <div class="space-y-6">
+      <!-- Return to Home / Demo Center Bar -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border border-blue-200/80 dark:border-blue-900/50 p-4 rounded-2xl shadow-sm gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            🏠
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-900 dark:text-white text-sm">Sub2API 控制台演示环境</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">您正在体验系统管理员控制台。可随时点击右侧按钮返回控制台首页重新选择不同角色或门户入口。</p>
+          </div>
+        </div>
+        <router-link to="/home" class="self-start sm:self-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-500/10 transition-all flex items-center gap-1.5 whitespace-nowrap">
+          <span>← 返回控制台首页 / 演示中心</span>
+        </router-link>
+      </div>
+
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center py-12">
         <LoadingSpinner />
