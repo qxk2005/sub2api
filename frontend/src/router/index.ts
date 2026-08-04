@@ -463,6 +463,18 @@ const routes: RouteRecordRaw[] = [
     }
   },
   {
+    path: '/admin/billing-system',
+    name: 'AdminBillingSystem',
+    component: () => import('@/views/admin/billing/AdminBillingSystemView.vue'),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+      title: '账单与充值系统 (2.6)',
+      titleKey: 'admin.billingSystem.title',
+      descriptionKey: 'admin.billingSystem.description'
+    }
+  },
+  {
     path: '/admin/groups',
     name: 'AdminGroups',
     component: () => import('@/views/admin/GroupsView.vue'),
