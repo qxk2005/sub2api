@@ -38,11 +38,11 @@ export const useDemoStore = defineStore('demo', () => {
     parentAgent: '智算云连华东代理',
     createdAt: '2026-03-15',
     employees: [
-      { id: 1, name: '张三', email: 'zhangsan@demo.com', role: '部门管理员', quota: 500000, used: 234567, status: '正常', lastActive: '2 小时前' },
-      { id: 2, name: '李四', email: 'lisi@demo.com', role: '普通员工', quota: 200000, used: 89012, status: '正常', lastActive: '1 天前' },
-      { id: 3, name: '王五', email: 'wangwu@demo.com', role: '普通员工', quota: 200000, used: 198765, status: '余额预警', lastActive: '3 小时前' },
-      { id: 4, name: '赵六', email: 'zhaoliu@demo.com', role: '普通员工', quota: 100000, used: 45678, status: '正常', lastActive: '5 小时前' },
-      { id: 5, name: '钱七', email: 'qianqi@demo.com', role: '普通员工', quota: 100000, used: 99999, status: '已停用', lastActive: '7 天前' },
+      { id: 1, name: '张三', email: 'zhangsan@demo.com', role: '部门管理员', quota: 500000, used: 234567, concurrency: 32, rpmLimit: 1200, status: '正常', lastActive: '2 小时前' },
+      { id: 2, name: '李四', email: 'lisi@demo.com', role: '普通员工', quota: 200000, used: 89012, concurrency: 16, rpmLimit: 600, status: '正常', lastActive: '1 天前' },
+      { id: 3, name: '王五', email: 'wangwu@demo.com', role: '普通员工', quota: 200000, used: 198765, concurrency: 16, rpmLimit: 600, status: '余额预警', lastActive: '3 小时前' },
+      { id: 4, name: '赵六', email: 'zhaoliu@demo.com', role: '普通员工', quota: 100000, used: 45678, concurrency: 16, rpmLimit: 600, status: '正常', lastActive: '5 小时前' },
+      { id: 5, name: '钱七', email: 'qianqi@demo.com', role: '普通员工', quota: 100000, used: 99999, concurrency: 16, rpmLimit: 600, status: '已停用', lastActive: '7 天前' },
     ],
     bills: [
       { period: '2026-07', total: 1289.50, models: { 'GPT-4o': 560.20, 'Claude 3.5': 489.30, '其他': 240.00 }, status: '已结算' },

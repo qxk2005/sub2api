@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * FRS V3.0 2.10 下游代理管理系统 (系统管理员控制端)
- * 苹果高级灰白配色，单级代理架构 (一级代理)，支持代理商下属企业租户与用户的追溯与管控 DEMO (2.10.5)
+ * 苹果高级灰白配色，支持三级分层下级客户追溯 (代理商 -> 企业租户 -> 租户成员用户 / 直属个人用户) 及自主开户管控 DEMO (2.10.5)
  */
 import { ref, computed } from 'vue'
 import AppLayout from '@/components/layout/AppLayout.vue'
@@ -95,33 +95,118 @@ const agentList = ref([
   }
 ])
 
-// 代理商下属企业租户与终端用户数据 Store (2.10.5 代理下级客户管理)
-const subordinateCustomersMap = ref<Record<string, Array<{
+// 租户成员数据类型定义 (三级结构: 代理商 -> 企业租户 -> 租户下属成员)
+interface SubordinateMember {
   id: string
   name: string
   email: string
-  type: 'tenant' | 'user'
+  role: 'tenant_admin' | 'tenant_user'
+  allocatedQuota: number
+  usedQuota: number
+  status: 'active' | 'disabled'
+}
+
+interface SubordinateCustomer {
+  id: string
+  name: string
+  email: string
+  type: 'tenant' | 'direct_user'
   balance: number
   monthlyTokens: string
   rate: number
   status: 'active' | 'disabled'
   joinedAt: string
-}>>>({
+  expanded?: boolean
+  members?: SubordinateMember[]
+}
+
+// 模拟代理商下属客户关系 Store (2.10.5 代理三级客户架构)
+const subordinateCustomersMap = ref<Record<string, SubordinateCustomer[]>>({
   'CNF-EAST-888': [
-    { id: 'TNT-8001', name: '字节跳动 AI 研发部', email: 'bytedance-ai@bytedance.com', type: 'tenant', balance: 45000.00, monthlyTokens: '1.2 亿 Tokens', rate: 1.25, status: 'active', joinedAt: '2026-02-01' },
-    { id: 'TNT-8002', name: '创世智能 算法团队', email: 'contact@creation-ai.cn', type: 'tenant', balance: 12800.00, monthlyTokens: '3500 万 Tokens', rate: 1.25, status: 'active', joinedAt: '2026-03-10' },
-    { id: 'USR-3011', name: '极客工作室 (张伟)', email: 'zhangwei@geek.io', type: 'user', balance: 2500.00, monthlyTokens: '800 万 Tokens', rate: 1.25, status: 'active', joinedAt: '2026-04-15' },
-    { id: 'TNT-8003', name: '灵动智造 AI Team', email: 'tech@lingdong.com', type: 'tenant', balance: 800.00, monthlyTokens: '120 万 Tokens', rate: 1.25, status: 'disabled', joinedAt: '2026-05-20' }
+    {
+      id: 'TNT-8001',
+      name: '字节跳动 AI 研发部',
+      email: 'bytedance-ai@bytedance.com',
+      type: 'tenant',
+      balance: 45000.00,
+      monthlyTokens: '1.2 亿 Tokens',
+      rate: 1.25,
+      status: 'active',
+      joinedAt: '2026-02-01',
+      expanded: true,
+      members: [
+        { id: 'MEM-101', name: '李四 (算法团队负责人)', email: 'lisi@bytedance.com', role: 'tenant_admin', allocatedQuota: 20000.00, usedQuota: 12400.00, status: 'active' },
+        { id: 'MEM-102', name: '王五 (NLP 研发工程师)', email: 'wangwu@bytedance.com', role: 'tenant_user', allocatedQuota: 15000.00, usedQuota: 8900.00, status: 'active' },
+        { id: 'MEM-103', name: '赵六 (视觉模型研究员)', email: 'zhaoliu@bytedance.com', role: 'tenant_user', allocatedQuota: 10000.00, usedQuota: 3200.00, status: 'active' }
+      ]
+    },
+    {
+      id: 'TNT-8002',
+      name: '创世智能 算法团队',
+      email: 'contact@creation-ai.cn',
+      type: 'tenant',
+      balance: 12800.00,
+      monthlyTokens: '3500 万 Tokens',
+      rate: 1.25,
+      status: 'active',
+      joinedAt: '2026-03-10',
+      expanded: false,
+      members: [
+        { id: 'MEM-201', name: '钱七 (CTO)', email: 'qianqi@creation-ai.cn', role: 'tenant_admin', allocatedQuota: 12800.00, usedQuota: 6500.00, status: 'active' }
+      ]
+    },
+    {
+      id: 'USR-3011',
+      name: '极客工作室 (张伟)',
+      email: 'zhangwei@geek.io',
+      type: 'direct_user',
+      balance: 2500.00,
+      monthlyTokens: '800 万 Tokens',
+      rate: 1.25,
+      status: 'active',
+      joinedAt: '2026-04-15'
+    },
+    {
+      id: 'TNT-8003',
+      name: '灵动智造 AI Team',
+      email: 'tech@lingdong.com',
+      type: 'tenant',
+      balance: 800.00,
+      monthlyTokens: '120 万 Tokens',
+      rate: 1.25,
+      status: 'disabled',
+      joinedAt: '2026-05-20',
+      expanded: false,
+      members: []
+    }
   ],
   'SOUTH-AI-666': [
-    { id: 'TNT-9001', name: '腾讯云合作项目组', email: 'tencent-cloud@tencent.com', type: 'tenant', balance: 68000.00, monthlyTokens: '2.1 亿 Tokens', rate: 1.30, status: 'active', joinedAt: '2026-02-15' },
-    { id: 'USR-4022', name: '羊城大模型开发者社区', email: 'dev@gz-llm.org', type: 'user', balance: 4200.00, monthlyTokens: '1500 万 Tokens', rate: 1.30, status: 'active', joinedAt: '2026-03-22' }
-  ],
-  'BJ-CLOUD-101': [
-    { id: 'TNT-7001', name: '清华 AI 算力实验组', email: 'tsinghua-ai@tsinghua.edu.cn', type: 'tenant', balance: 28000.00, monthlyTokens: '8000 万 Tokens', rate: 1.15, status: 'active', joinedAt: '2026-03-05' }
-  ],
-  'CD-LLM-520': [
-    { id: 'TNT-6001', name: '四川华西医院 AI 影像中心', email: 'huaxi-ai@wchscu.cn', type: 'tenant', balance: 39000.00, monthlyTokens: '9500 万 Tokens', rate: 1.20, status: 'active', joinedAt: '2026-04-18' }
+    {
+      id: 'TNT-9001',
+      name: '腾讯云合作项目组',
+      email: 'tencent-cloud@tencent.com',
+      type: 'tenant',
+      balance: 68000.00,
+      monthlyTokens: '2.1 亿 Tokens',
+      rate: 1.30,
+      status: 'active',
+      joinedAt: '2026-02-15',
+      expanded: true,
+      members: [
+        { id: 'MEM-301', name: '孙八 (高级架构师)', email: 'sunba@tencent.com', role: 'tenant_admin', allocatedQuota: 40000.00, usedQuota: 28000.00, status: 'active' }
+      ]
+    },
+    {
+      id: 'USR-4022',
+      name: '羊城大模型开发者社区 (直属用户)',
+      email: 'dev@gz-llm.org',
+      type: 'direct_user',
+      balance: 4200.00,
+      monthlyTokens: '1500 万 Tokens',
+      rate: 1.30,
+      status: 'active',
+      joinedAt: '2026-03-22'
+    }
   ]
 })
 
@@ -228,7 +313,19 @@ const submitAddAgent = () => {
   
   // 初始化下属客户列表空模板
   subordinateCustomersMap.value[randomCode] = [
-    { id: `TNT-${Math.floor(8000 + Math.random() * 1000)}`, name: `${newAgentForm.value.username} 初始测试租户`, email: newAgentForm.value.email, type: 'tenant', balance: 5000.00, monthlyTokens: '1000 万 Tokens', rate: newAgentForm.value.group_rate, status: 'active', joinedAt: nowStr.slice(0, 10) }
+    {
+      id: `TNT-${Math.floor(8000 + Math.random() * 1000)}`,
+      name: `${newAgentForm.value.username} 初始企业租户`,
+      email: newAgentForm.value.email,
+      type: 'tenant',
+      balance: 5000.00,
+      monthlyTokens: '1000 万 Tokens',
+      rate: newAgentForm.value.group_rate,
+      status: 'active',
+      joinedAt: nowStr.slice(0, 10),
+      expanded: false,
+      members: []
+    }
   ]
 
   newAgentForm.value = {
@@ -243,16 +340,38 @@ const submitAddAgent = () => {
   }
   isAddModalOpen.value = false
   
-  addToastMessage.value = '成功开通一级代理商账号！下属租户追踪管道已自动就绪。'
+  addToastMessage.value = '成功开通一级代理商账号！下属三级租户/用户架构已就绪。'
   showAddToast.value = true
   setTimeout(() => showAddToast.value = false, 3500)
 }
 
-// 代理商下属客户管理 Modal (2.10.5 DEMO 核心交互)
+// 代理商下属客户管理 Modal (2.10.5 核心三级交互 DEMO)
 const isSubordinateModalOpen = ref(false)
 const targetAgentForSubordinates = ref<any>(null)
 const subCustomerSearch = ref('')
-const subCustomerType = ref<'all' | 'tenant' | 'user'>('all')
+const subCustomerType = ref<'all' | 'tenant' | 'direct_user'>('all')
+
+// 新建客户/成员 Modal 控制
+const isCreateCustomerModalOpen = ref(false)
+const createCustomerType = ref<'tenant' | 'direct_user'>('tenant')
+const newCustomerForm = ref({
+  name: '',
+  email: '',
+  balance: 10000.00,
+  concurrency: 32,
+  rpm_limit: 1000,
+  notes: ''
+})
+
+// 新建租户成员 Modal 控制
+const isAddMemberModalOpen = ref(false)
+const targetTenantForMember = ref<SubordinateCustomer | null>(null)
+const newMemberForm = ref({
+  name: '',
+  email: '',
+  role: 'tenant_user' as 'tenant_admin' | 'tenant_user',
+  allocatedQuota: 2000.00
+})
 
 const openSubordinateModal = (agent: any) => {
   targetAgentForSubordinates.value = agent
@@ -271,18 +390,93 @@ const currentSubordinates = computed(() => {
   })
 })
 
-// 管理员向代理下属客户直接划拨额度
-const rechargeSubordinate = (cust: any) => {
+// 展开/收起企业租户成员
+const toggleTenantExpand = (cust: SubordinateCustomer) => {
+  if (cust.type === 'tenant') {
+    cust.expanded = !cust.expanded
+  }
+}
+
+// 管理员/代理商提交【创建企业租户 / 直属个人用户】
+const submitCreateCustomer = () => {
+  if (!newCustomerForm.value.name || !newCustomerForm.value.email || !targetAgentForSubordinates.value) return
+  const affCode = targetAgentForSubordinates.value.aff_code
+  const prefix = createCustomerType.value === 'tenant' ? 'TNT' : 'USR'
+  const newId = `${prefix}-${Math.floor(8100 + Math.random() * 900)}`
+  const today = new Date().toISOString().slice(0, 10)
+
+  const newCust: SubordinateCustomer = {
+    id: newId,
+    name: newCustomerForm.value.name,
+    email: newCustomerForm.value.email,
+    type: createCustomerType.value,
+    balance: newCustomerForm.value.balance,
+    monthlyTokens: '0 Tokens',
+    rate: targetAgentForSubordinates.value.group_rate,
+    status: 'active',
+    joinedAt: today,
+    expanded: createCustomerType.value === 'tenant',
+    members: createCustomerType.value === 'tenant' ? [] : undefined
+  }
+
+  if (!subordinateCustomersMap.value[affCode]) {
+    subordinateCustomersMap.value[affCode] = []
+  }
+  subordinateCustomersMap.value[affCode].unshift(newCust)
+  targetAgentForSubordinates.value.usersCount++
+
+  newCustomerForm.value = { name: '', email: '', balance: 10000.00, concurrency: 32, rpm_limit: 1000, notes: '' }
+  isCreateCustomerModalOpen.value = false
+
+  addToastMessage.value = `✓ 成功在代理【${targetAgentForSubordinates.value.username}】下创建了${createCustomerType.value === 'tenant' ? '🏢 企业租户' : '👤 直属个人用户'}！`
+  showAddToast.value = true
+  setTimeout(() => showAddToast.value = false, 3500)
+}
+
+// 展开【添加租户成员 Modal】
+const openAddMemberModal = (tenantCust: SubordinateCustomer) => {
+  targetTenantForMember.value = tenantCust
+  newMemberForm.value = { name: '', email: '', role: 'tenant_user', allocatedQuota: 2000.00 }
+  isAddMemberModalOpen.value = true
+}
+
+// 提交【添加租户成员】
+const submitAddMember = () => {
+  if (!newMemberForm.value.name || !newMemberForm.value.email || !targetTenantForMember.value) return
+  if (!targetTenantForMember.value.members) {
+    targetTenantForMember.value.members = []
+  }
+  const newMemId = `MEM-${Math.floor(500 + Math.random() * 500)}`
+  targetTenantForMember.value.members.push({
+    id: newMemId,
+    name: newMemberForm.value.name,
+    email: newMemberForm.value.email,
+    role: newMemberForm.value.role,
+    allocatedQuota: newMemberForm.value.allocatedQuota,
+    usedQuota: 0.00,
+    status: 'active'
+  })
+
+  targetTenantForMember.value.expanded = true
+  isAddMemberModalOpen.value = false
+
+  addToastMessage.value = `✓ 成功为企业租户【${targetTenantForMember.value.name}】添加成员【${newMemberForm.value.name}】！`
+  showAddToast.value = true
+  setTimeout(() => showAddToast.value = false, 3500)
+}
+
+// 划拨额度
+const rechargeSubordinate = (cust: SubordinateCustomer) => {
   cust.balance += 5000.00
   addToastMessage.value = `✓ 已成功向下级客户【${cust.name}】划拨 5000.00 元 Token 额度！`
   showAddToast.value = true
   setTimeout(() => showAddToast.value = false, 3000)
 }
 
-// 管理员冻结/解封代理下属客户
-const toggleSubordinateStatus = (cust: any) => {
+// 冻结/解封账号
+const toggleSubordinateStatus = (cust: SubordinateCustomer) => {
   cust.status = cust.status === 'active' ? 'disabled' : 'active'
-  addToastMessage.value = `✓ 下级客户【${cust.name}】账号状态已更新为：${cust.status === 'active' ? '正常' : '已冻结停用'}`
+  addToastMessage.value = `✓ 下级客户【${cust.name}】账号状态已更新为：${cust.status === 'active' ? '正常运行' : '已冻结停用'}`
   showAddToast.value = true
   setTimeout(() => showAddToast.value = false, 3000)
 }
@@ -319,11 +513,11 @@ const markPaid = (payout: any) => {
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 dark:border-dark-700 pb-4">
           <div>
             <div class="inline-flex items-center space-x-2 bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 px-3.5 py-1 rounded-full text-xs font-bold border border-amber-200/80 dark:border-amber-900/60">
-              <span>💎 FRS V3.0 2.10 下游代理管理系统 (下级客户数据追溯 & 管控)</span>
+              <span>💎 FRS V3.0 2.10 下游代理管理系统 (三级客户架构)</span>
             </div>
             <h1 class="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white mt-2">渠道代理商管理中心</h1>
             <p class="text-xs md:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              基于 sub2api 用户/管理员模型，管理代理商账号、下属企业租户与终端 Key 追溯、余额划拨与阶梯提现。
+              支持代理商 -> 🏢 企业租户 -> 👥 租户成员 及 👤 直属个人用户 三级层级追溯、自主开户与额度划拨。
             </p>
           </div>
 
@@ -368,7 +562,7 @@ const markPaid = (payout: any) => {
           @click="activeTab = 'list'"
           :class="['px-5 py-2.5 rounded-2xl font-bold text-xs transition-all', activeTab === 'list' ? 'bg-blue-600 text-white shadow-sm' : 'bg-white dark:bg-dark-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 hover:bg-slate-100']"
         >
-          📋 代理商账号管理 & 下级客户管控 (2.10.1 - 2.10.5)
+          📋 代理商账号管理 & 三级客户架构 (2.10.1 - 2.10.5)
         </button>
         <button 
           @click="activeTab = 'audit'"
@@ -390,7 +584,7 @@ const markPaid = (payout: any) => {
         <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 pb-3 border-b border-slate-100 dark:border-dark-700">
           <div>
             <h3 class="text-base font-bold text-slate-900 dark:text-white">一级代理商账号全量矩阵</h3>
-            <p class="text-xs text-slate-400 mt-0.5">支持查看并管理代理商下属招募的企业租户与终端 Key 用户（2.10.5）。</p>
+            <p class="text-xs text-slate-400 mt-0.5">点击“下级客户”可展开代理商下属企业租户、租户成员及直属个人用户。</p>
           </div>
 
           <div class="flex items-center gap-2">
@@ -783,17 +977,17 @@ const markPaid = (payout: any) => {
       </div>
     </div>
 
-    <!-- Modal 3: 管理员管理代理商下属租户与终端用户 (2.10.5 DEMO 核心交互) -->
+    <!-- Modal 3: 管理员管理代理商下属三级客户 (代理商 -> 企业租户 -> 租户成员 / 直属个人用户) (2.10.5 DEMO 核心交互) -->
     <div v-if="isSubordinateModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-fade-in">
       <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 md:p-8 max-w-5xl w-full border border-slate-200/80 dark:border-dark-700 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
         
         <div class="flex justify-between items-start pb-4 border-b border-slate-100 dark:border-dark-700">
           <div>
             <div class="inline-flex items-center space-x-2 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 px-3.5 py-1 rounded-full text-xs font-bold border border-amber-200/80">
-              <span>👥 FRS 2.10.5 代理下级客户追溯 & 管控</span>
+              <span>👥 FRS 2.10.5 代理三级客户追溯 & 管控</span>
             </div>
             <h3 class="text-xl font-black text-slate-900 dark:text-white mt-2">
-              代理商【{{ targetAgentForSubordinates?.username }}】下属客户全量追踪
+              代理商【{{ targetAgentForSubordinates?.username }}】下属三级客户全量追踪
             </h3>
             <p class="text-xs text-slate-400 mt-1 font-mono">
               绑定邀请码: <code class="px-2 py-0.5 bg-slate-100 dark:bg-dark-900 rounded font-bold text-blue-600 dark:text-blue-400">{{ targetAgentForSubordinates?.aff_code }}</code> | 所属专属号池: <span class="font-bold text-slate-700 dark:text-slate-300">{{ targetAgentForSubordinates?.pool }}</span>
@@ -802,14 +996,14 @@ const markPaid = (payout: any) => {
           <button @click="isSubordinateModalOpen = false" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-dark-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 flex items-center justify-center text-sm font-bold transition-all">✕</button>
         </div>
 
-        <!-- 筛选与搜索栏 -->
+        <!-- 筛选与建仓操作栏 -->
         <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
           <div class="flex items-center gap-2 text-xs w-full sm:w-auto">
             <button 
               @click="subCustomerType = 'all'"
               :class="['px-4 py-2 rounded-2xl font-bold transition-all whitespace-nowrap', subCustomerType === 'all' ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm' : 'bg-slate-100 text-slate-600 dark:bg-dark-700 dark:text-slate-300 hover:bg-slate-200']"
             >
-              全部下级客户 ({{ currentSubordinates.length }})
+              全部客户 ({{ currentSubordinates.length }})
             </button>
             <button 
               @click="subCustomerType = 'tenant'"
@@ -818,109 +1012,199 @@ const markPaid = (payout: any) => {
               🏢 企业租户
             </button>
             <button 
-              @click="subCustomerType = 'user'"
-              :class="['px-4 py-2 rounded-2xl font-bold transition-all whitespace-nowrap', subCustomerType === 'user' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 dark:bg-dark-700 dark:text-slate-300 hover:bg-slate-200']"
+              @click="subCustomerType = 'direct_user'"
+              :class="['px-4 py-2 rounded-2xl font-bold transition-all whitespace-nowrap', subCustomerType === 'direct_user' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600 dark:bg-dark-700 dark:text-slate-300 hover:bg-slate-200']"
             >
-              👤 个人终端用户
+              👤 直属个人用户
             </button>
           </div>
 
-          <div class="relative w-full sm:w-64">
+          <div class="flex items-center gap-2 w-full sm:w-auto">
             <input 
               v-model="subCustomerSearch"
               type="text" 
-              placeholder="搜索下级客户名称、邮箱..." 
-              class="w-full px-4 py-2 bg-slate-50 dark:bg-dark-900 border border-slate-200/80 dark:border-dark-700 rounded-2xl text-xs outline-none focus:border-blue-500 focus:bg-white transition-all"
+              placeholder="搜索下级客户/成员..." 
+              class="px-3.5 py-1.5 bg-slate-50 dark:bg-dark-900 border border-slate-200/80 dark:border-dark-700 rounded-2xl text-xs outline-none focus:border-blue-500 focus:bg-white transition-all w-full sm:w-48"
             />
+            
+            <button 
+              @click="createCustomerType = 'tenant'; isCreateCustomerModalOpen = true"
+              class="px-3 py-1.5 bg-blue-600 text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors shadow-2xs whitespace-nowrap"
+            >
+              + 创建企业租户
+            </button>
+            <button 
+              @click="createCustomerType = 'direct_user'; isCreateCustomerModalOpen = true"
+              class="px-3 py-1.5 bg-indigo-600 text-white rounded-xl text-xs font-bold hover:bg-indigo-700 transition-colors shadow-2xs whitespace-nowrap"
+            >
+              + 创建直属用户
+            </button>
           </div>
         </div>
 
-        <!-- 下级客户列表表格 (精致苹果灰白卡片桌布) -->
+        <!-- 下级客户与租户成员三级树状表格 -->
         <div class="overflow-x-auto border border-slate-200/80 dark:border-dark-700 rounded-3xl shadow-sm">
           <table class="w-full text-xs text-left">
             <thead class="bg-slate-50 dark:bg-dark-900 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200/80 dark:border-dark-700">
               <tr>
-                <th class="px-5 py-3.5">客户 ID / 名称</th>
-                <th class="px-5 py-3.5">客户类型</th>
-                <th class="px-5 py-3.5">账户余额 (balance)</th>
+                <th class="px-5 py-3.5">客户/成员 ID & 名称</th>
+                <th class="px-5 py-3.5">客户架构类型</th>
+                <th class="px-5 py-3.5">账户余额 / 成员额度</th>
                 <th class="px-5 py-3.5">月消耗 Tokens</th>
-                <th class="px-5 py-3.5">执行费率倍率</th>
+                <th class="px-5 py-3.5">执行加价倍率</th>
                 <th class="px-5 py-3.5">状态</th>
-                <th class="px-5 py-3.5 text-right">管理员直接管控</th>
+                <th class="px-5 py-3.5 text-right">三级层级管控操作</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-dark-700 font-mono">
-              <tr v-for="cust in currentSubordinates" :key="cust.id" class="hover:bg-slate-50/80 dark:hover:bg-dark-900/50 transition-colors">
-                <td class="px-5 py-4 font-sans">
-                  <div class="font-bold text-slate-900 dark:text-white text-sm">{{ cust.name }}</div>
-                  <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ cust.id }} · {{ cust.email }}</div>
-                </td>
+              <template v-for="cust in currentSubordinates" :key="cust.id">
+                <!-- 顶级客户行 (企业租户 / 直属个人用户) -->
+                <tr class="hover:bg-slate-50/80 dark:hover:bg-dark-900/50 transition-colors">
+                  <td class="px-5 py-4 font-sans">
+                    <div class="flex items-center space-x-2">
+                      <button 
+                        v-if="cust.type === 'tenant'" 
+                        @click="toggleTenantExpand(cust)"
+                        class="w-5 h-5 rounded-md bg-slate-100 dark:bg-dark-700 text-slate-500 hover:bg-slate-200 flex items-center justify-center font-bold text-xs"
+                      >
+                        {{ cust.expanded ? '▼' : '►' }}
+                      </button>
+                      <div>
+                        <div class="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-1.5">
+                          <span>{{ cust.name }}</span>
+                          <span v-if="cust.type === 'tenant'" class="text-[10px] text-blue-600 font-mono bg-blue-50 px-1.5 py-0.2 rounded font-normal">({{ cust.members?.length || 0 }} 成员)</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ cust.id }} · {{ cust.email }}</div>
+                      </div>
+                    </div>
+                  </td>
 
-                <td class="px-5 py-4 font-sans whitespace-nowrap">
-                  <span 
-                    :class="[
-                      'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs',
-                      cust.type === 'tenant' 
-                        ? 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-900/60' 
-                        : 'bg-indigo-50 text-indigo-700 border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-900/60'
-                    ]"
-                  >
-                    {{ cust.type === 'tenant' ? '🏢 企业租户' : '👤 个人用户' }}
-                  </span>
-                </td>
-
-                <td class="px-5 py-4 font-bold text-slate-900 dark:text-white text-sm">
-                  ¥{{ cust.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 }) }}
-                </td>
-
-                <td class="px-5 py-4 font-bold text-blue-600 dark:text-blue-400">
-                  {{ cust.monthlyTokens }}
-                </td>
-
-                <td class="px-5 py-4 whitespace-nowrap">
-                  <div class="font-bold text-slate-900 dark:text-white">{{ cust.rate.toFixed(2) }}x</div>
-                  <div class="text-[10px] text-slate-400 font-sans">代理溢价倍率</div>
-                </td>
-
-                <td class="px-5 py-4 font-sans whitespace-nowrap">
-                  <span 
-                    :class="[
-                      'inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs',
-                      cust.status === 'active' 
-                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900/60' 
-                        : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-900/60'
-                    ]"
-                  >
-                    <span :class="['w-1.5 h-1.5 rounded-full', cust.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500']"></span>
-                    <span>{{ cust.status === 'active' ? '正常运行' : '已冻结管控' }}</span>
-                  </span>
-                </td>
-
-                <td class="px-5 py-4 text-right font-sans whitespace-nowrap">
-                  <div class="inline-flex items-center justify-end space-x-2">
-                    <button 
-                      @click="rechargeSubordinate(cust)" 
-                      class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:hover:bg-blue-900 dark:text-blue-300 font-bold text-xs border border-blue-200/60 transition-all shadow-2xs active:scale-95"
-                    >
-                      <span>⚡</span>
-                      <span>划拨额度</span>
-                    </button>
-
-                    <button 
-                      @click="toggleSubordinateStatus(cust)" 
+                  <td class="px-5 py-4 font-sans whitespace-nowrap">
+                    <span 
                       :class="[
-                        'inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all shadow-2xs active:scale-95',
-                        cust.status === 'active' 
-                          ? 'bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 dark:bg-dark-700 dark:text-slate-300 border-slate-200 dark:border-dark-600' 
-                          : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200'
+                        'inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs',
+                        cust.type === 'tenant' 
+                          ? 'bg-blue-50 text-blue-700 border-blue-200/80 dark:bg-blue-950/60 dark:text-blue-300 dark:border-blue-900/60' 
+                          : 'bg-indigo-50 text-indigo-700 border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-900/60'
                       ]"
                     >
-                      <span>{{ cust.status === 'active' ? '🔒' : '🔓' }}</span>
-                      <span>{{ cust.status === 'active' ? '冻结' : '解封' }}</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
+                      {{ cust.type === 'tenant' ? '🏢 企业租户' : '👤 直属个人用户' }}
+                    </span>
+                  </td>
+
+                  <td class="px-5 py-4 font-bold text-slate-900 dark:text-white text-sm">
+                    ¥{{ cust.balance.toLocaleString('zh-CN', { minimumFractionDigits: 2 }) }}
+                  </td>
+
+                  <td class="px-5 py-4 font-bold text-blue-600 dark:text-blue-400">
+                    {{ cust.monthlyTokens }}
+                  </td>
+
+                  <td class="px-5 py-4 whitespace-nowrap">
+                    <div class="font-bold text-slate-900 dark:text-white">{{ cust.rate.toFixed(2) }}x</div>
+                    <div class="text-[10px] text-slate-400 font-sans">代理溢价倍率</div>
+                  </td>
+
+                  <td class="px-5 py-4 font-sans whitespace-nowrap">
+                    <span 
+                      :class="[
+                        'inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap border shadow-2xs',
+                        cust.status === 'active' 
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-900/60' 
+                          : 'bg-rose-50 text-rose-700 border-rose-200/80 dark:bg-rose-950/60 dark:text-rose-300 dark:border-rose-900/60'
+                      ]"
+                    >
+                      <span :class="['w-1.5 h-1.5 rounded-full', cust.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500']"></span>
+                      <span>{{ cust.status === 'active' ? '正常运行' : '已冻结管控' }}</span>
+                    </span>
+                  </td>
+
+                  <td class="px-5 py-4 text-right font-sans whitespace-nowrap">
+                    <div class="inline-flex items-center justify-end space-x-2">
+                      <button 
+                        v-if="cust.type === 'tenant'"
+                        @click="openAddMemberModal(cust)" 
+                        class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold text-xs border border-amber-200/80 transition-all shadow-2xs active:scale-95"
+                      >
+                        <span>+ 成员</span>
+                      </button>
+
+                      <button 
+                        @click="rechargeSubordinate(cust)" 
+                        class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 dark:bg-blue-950/60 dark:hover:bg-blue-900 dark:text-blue-300 font-bold text-xs border border-blue-200/60 transition-all shadow-2xs active:scale-95"
+                      >
+                        <span>⚡</span>
+                        <span>划拨</span>
+                      </button>
+
+                      <button 
+                        @click="toggleSubordinateStatus(cust)" 
+                        :class="[
+                          'inline-flex items-center space-x-1 px-3 py-1.5 rounded-xl font-bold text-xs border transition-all shadow-2xs active:scale-95',
+                          cust.status === 'active' 
+                            ? 'bg-slate-100 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-600 dark:bg-dark-700 dark:text-slate-300 border-slate-200 dark:border-dark-600' 
+                            : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200'
+                        ]"
+                      >
+                        <span>{{ cust.status === 'active' ? '🔒' : '🔓' }}</span>
+                        <span>{{ cust.status === 'active' ? '冻结' : '解封' }}</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- 企业租户下属成员行 (第三级展开层级) -->
+                <template v-if="cust.type === 'tenant' && cust.expanded">
+                  <tr v-for="mem in cust.members" :key="mem.id" class="bg-slate-50/60 dark:bg-dark-900/40 hover:bg-blue-50/40 transition-colors">
+                    <td class="pl-12 py-3 font-sans">
+                      <div class="flex items-center space-x-2">
+                        <span class="text-slate-300">└─</span>
+                        <div>
+                          <div class="font-bold text-slate-800 dark:text-slate-200 text-xs flex items-center gap-1.5">
+                            <span>👤 {{ mem.name }}</span>
+                            <span :class="['text-[9px] px-1.5 py-0.2 rounded font-mono', mem.role === 'tenant_admin' ? 'bg-amber-100 text-amber-700 font-bold' : 'bg-slate-200 text-slate-600']">
+                              {{ mem.role === 'tenant_admin' ? '租户管理员' : '普通成员' }}
+                            </span>
+                          </div>
+                          <div class="text-[10px] text-slate-400 font-mono">{{ mem.id }} · {{ mem.email }}</div>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td class="px-5 py-3 font-sans text-slate-400 text-[11px]">
+                      租户下属成员
+                    </td>
+
+                    <td class="px-5 py-3 font-bold text-slate-700 dark:text-slate-300 text-xs font-mono">
+                      配额: ¥{{ mem.allocatedQuota.toFixed(2) }} (已用: ¥{{ mem.usedQuota.toFixed(2) }})
+                    </td>
+
+                    <td class="px-5 py-3 text-slate-400 text-xs font-mono">
+                      继承租户资源
+                    </td>
+
+                    <td class="px-5 py-3 text-slate-400 text-xs font-mono">
+                      {{ cust.rate.toFixed(2) }}x (继承)
+                    </td>
+
+                    <td class="px-5 py-3 font-sans whitespace-nowrap">
+                      <span class="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 font-bold">
+                        正常活跃
+                      </span>
+                    </td>
+
+                    <td class="px-5 py-3 text-right font-sans whitespace-nowrap">
+                      <span class="text-slate-400 text-[11px] italic">由企业租户【{{ cust.name }}】独立管理</span>
+                    </td>
+                  </tr>
+
+                  <tr v-if="!cust.members || cust.members.length === 0" class="bg-slate-50/40 dark:bg-dark-900/30">
+                    <td colspan="7" class="pl-12 py-3 text-slate-400 text-xs italic">
+                      └─ 该企业租户下暂无成员，点击“+ 成员”即可为其添加子账号
+                    </td>
+                  </tr>
+                </template>
+              </template>
 
               <tr v-if="currentSubordinates.length === 0">
                 <td colspan="7" class="text-center py-10 text-slate-400 font-sans italic">
@@ -938,6 +1222,118 @@ const markPaid = (payout: any) => {
           </div>
           <button @click="isSubordinateModalOpen = false" class="px-5 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-bold text-xs hover:bg-blue-600 transition-colors shadow-sm">
             关闭
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 4: 创建下级客户 (企业租户 / 直属个人用户) -->
+    <div v-if="isCreateCustomerModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 md:p-8 max-w-lg w-full border border-slate-200 dark:border-dark-700 shadow-2xl space-y-5">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-dark-700">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <span>+ 创建下级{{ createCustomerType === 'tenant' ? '🏢 企业租户' : '👤 直属个人用户' }}</span>
+          </h3>
+          <button @click="isCreateCustomerModalOpen = false" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">客户名称 (username) <span class="text-red-500">*</span></label>
+            <input 
+              v-model="newCustomerForm.name" 
+              type="text" 
+              :placeholder="createCustomerType === 'tenant' ? '例如: 联想 AI 研发中心' : '例如: 独立开发者 李雷'" 
+              class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none focus:border-blue-500" 
+            />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">管理员 / 用户邮箱 (email) <span class="text-red-500">*</span></label>
+            <input 
+              v-model="newCustomerForm.email" 
+              type="email" 
+              placeholder="例如: admin@lenovo-ai.com" 
+              class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none focus:border-blue-500" 
+            />
+          </div>
+
+          <div class="grid grid-cols-3 gap-3">
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">初始余额 (balance)</label>
+              <input v-model.number="newCustomerForm.balance" type="number" step="1000" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
+            </div>
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">并发 (concurrency)</label>
+              <input v-model.number="newCustomerForm.concurrency" type="number" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
+            </div>
+            <div class="space-y-1">
+              <label class="font-bold text-slate-700 dark:text-slate-300">RPM cap</label>
+              <input v-model.number="newCustomerForm.rpm_limit" type="number" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button @click="isCreateCustomerModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-dark-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs">
+            取消
+          </button>
+          <button 
+            @click="submitCreateCustomer" 
+            :disabled="!newCustomerForm.name || !newCustomerForm.email"
+            :class="['px-4 py-2 rounded-xl font-bold text-xs transition-colors', (!newCustomerForm.name || !newCustomerForm.email) ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500']"
+          >
+            确认创建客户
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal 5: 为企业租户添加下属成员用户 -->
+    <div v-if="isAddMemberModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
+      <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 md:p-8 max-w-md w-full border border-slate-200 dark:border-dark-700 shadow-2xl space-y-5">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-dark-700">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">
+            + 为企业租户【{{ targetTenantForMember?.name }}】添加成员
+          </h3>
+          <button @click="isAddMemberModalOpen = false" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">成员姓名 <span class="text-red-500">*</span></label>
+            <input v-model="newMemberForm.name" type="text" placeholder="例如: 孙八" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">成员工作邮箱 <span class="text-red-500">*</span></label>
+            <input v-model="newMemberForm.email" type="email" placeholder="例如: sunba@company.com" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">成员角色</label>
+            <select v-model="newMemberForm.role" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none">
+              <option value="tenant_admin">租户管理员 (Tenant Admin)</option>
+              <option value="tenant_user">普通成员 (Tenant User)</option>
+            </select>
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">租户内部分配额度 (元)</label>
+            <input v-model.number="newMemberForm.allocatedQuota" type="number" step="500" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none" />
+          </div>
+        </div>
+
+        <div class="flex justify-end space-x-2 pt-2">
+          <button @click="isAddMemberModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-dark-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs">
+            取消
+          </button>
+          <button 
+            @click="submitAddMember" 
+            :disabled="!newMemberForm.name || !newMemberForm.email"
+            :class="['px-4 py-2 rounded-xl font-bold text-xs transition-colors', (!newMemberForm.name || !newMemberForm.email) ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-500']"
+          >
+            添加成员
           </button>
         </div>
       </div>

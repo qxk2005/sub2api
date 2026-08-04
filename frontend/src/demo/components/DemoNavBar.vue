@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Demo 公共顶部导航栏
- * 提供"返回 Home"按钮和各角色门户快捷切换链接
+ * Demo 公共顶部导航栏 + 高级版门户标题 Banner 指示器
+ * 明确标识 平台中台 (Level 1) / 渠道代理 (Level 2) / 企业租户 (Level 3) 各种控制层级
  */
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -25,42 +25,129 @@ const currentPortal = computed(() => {
   if (path.startsWith('/demo/desktop')) return '/demo/desktop'
   return ''
 })
+
+// 高级版门户 Banner 详细元数据
+const portalMeta = computed(() => {
+  const path = route.path
+  if (path.startsWith('/demo/agent')) {
+    return {
+      type: 'agent',
+      levelBadge: 'Level 2 渠道代理控制层',
+      title: '🤝 渠道代理商管理门户 (Agent Channel Portal)',
+      desc: '针对一级渠道代理商的专属管理后台 · 具备下级企业租户与直营用户开户、专属加价倍率设置及阶梯佣金结算控制权',
+      tagColor: 'bg-amber-50 text-amber-700 border-amber-200/80',
+      glowColor: 'bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-transparent border-amber-300/60',
+      accentBadge: '👑 金牌核心代理商 (智算云连华东)'
+    }
+  }
+  if (path.startsWith('/demo/tenant')) {
+    return {
+      type: 'tenant',
+      levelBadge: 'Level 3 企业租户控制层',
+      title: '🏢 企业租户管理控制台 (Enterprise Tenant Console)',
+      desc: '面向企业/团队管理员的资源管控台 · 支持直接创建企业员工账号、分配 API Key 额度、并发 QPS / RPM 限制及月度对账',
+      tagColor: 'bg-blue-50 text-blue-700 border-blue-200/80',
+      glowColor: 'bg-gradient-to-r from-blue-600/10 via-indigo-500/5 to-transparent border-blue-300/60',
+      accentBadge: '⚡ 示例科技有限公司 (专业版套餐)'
+    }
+  }
+  if (path.startsWith('/admin')) {
+    return {
+      type: 'admin',
+      levelBadge: 'Level 1 平台顶级控制塔',
+      title: '👑 平台中央中台管理大盘 (Platform Level Control)',
+      desc: '超级管理员掌控中心 · 全局引擎 A 缓存、Engine B 穿透扣费、全网渠道代理管控与号池智能调度',
+      tagColor: 'bg-purple-50 text-purple-700 border-purple-200/80',
+      glowColor: 'bg-gradient-to-r from-purple-600/10 via-indigo-500/5 to-transparent border-purple-300/60',
+      accentBadge: '👑 平台超级管理员 (Super Admin)'
+    }
+  }
+  if (path.startsWith('/demo/portal')) {
+    return {
+      type: 'portal',
+      levelBadge: 'Level 4 终端使用者 / 官网应用层',
+      title: '🌐 Sub2API 官网门户与 AI 模型交互台',
+      desc: '面向开发者与公众客群的模型广场、在线 Playbround 及 API 接入文档中心',
+      tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200/80',
+      glowColor: 'bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-transparent border-emerald-300/60',
+      accentBadge: '✨ 开放模型广场'
+    }
+  }
+  if (path.startsWith('/demo/desktop')) {
+    return {
+      type: 'desktop',
+      levelBadge: 'Level 4 终端本地客户端',
+      title: '🖥️ Sub2API 桌面原生代理客户端',
+      desc: 'Windows / macOS 开发者本地配置一键注入与实时延迟测速网关',
+      tagColor: 'bg-indigo-50 text-indigo-700 border-indigo-200/80',
+      glowColor: 'bg-gradient-to-r from-indigo-500/10 via-blue-500/5 to-transparent border-indigo-300/60',
+      accentBadge: '💻 原生桌面客户端'
+    }
+  }
+  return null
+})
 </script>
 
 <template>
-  <div class="demo-nav-bar sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
-    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-2.5 sm:px-6">
-      <!-- 左侧：返回 Home + Demo 标记 -->
-      <div class="flex items-center space-x-3">
-        <router-link
-          to="/home"
-          class="flex items-center space-x-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
-        >
-          <span>←</span>
-          <span>返回 Home</span>
-        </router-link>
-        <span class="rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-2.5 py-0.5 text-[10px] font-bold tracking-wide text-white">
-          DEMO
-        </span>
-      </div>
+  <div class="demo-nav-bar-container sticky top-0 z-50 shadow-2xs font-sans">
+    <!-- 顶部极简导航栏 -->
+    <div class="border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+      <div class="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-2.5 sm:px-6">
+        <!-- 左侧：返回 Home + Demo 标记 -->
+        <div class="flex items-center space-x-3">
+          <router-link
+            to="/home"
+            class="flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
+          >
+            <span>←</span>
+            <span>返回 Home</span>
+          </router-link>
+          <span class="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-2.5 py-0.5 text-[10px] font-black tracking-wide text-white shadow-2xs">
+            DEMO
+          </span>
+        </div>
 
-      <!-- 右侧：角色门户快捷切换 -->
-      <nav class="flex items-center space-x-1">
-        <router-link
-          v-for="link in portalLinks"
-          :key="link.path"
-          :to="link.path"
-          :class="[
-            'flex items-center space-x-1 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all',
-            currentPortal === link.path
-              ? 'bg-slate-900 text-white shadow-sm'
-              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'
-          ]"
-        >
-          <span class="text-sm">{{ link.icon }}</span>
-          <span class="hidden sm:inline">{{ link.label }}</span>
-        </router-link>
-      </nav>
+        <!-- 右侧：角色门户快捷切换 -->
+        <nav class="flex items-center space-x-1.5">
+          <router-link
+            v-for="link in portalLinks"
+            :key="link.path"
+            :to="link.path"
+            :class="[
+              'flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+              currentPortal === link.path
+                ? 'bg-slate-900 text-white shadow-sm'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            ]"
+          >
+            <span class="text-sm">{{ link.icon }}</span>
+            <span class="hidden sm:inline">{{ link.label }}</span>
+          </router-link>
+        </nav>
+      </div>
+    </div>
+
+    <!-- 高级版 PORTAL 身份指示 BANNER (在导航栏与下层内容之间) -->
+    <div v-if="portalMeta" :class="['w-full border-b backdrop-blur-md px-4 py-2.5 sm:px-6 transition-all duration-300', portalMeta.glowColor]">
+      <div class="mx-auto max-w-[1440px] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div class="flex items-center space-x-3">
+          <span :class="['px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-2xs whitespace-nowrap', portalMeta.tagColor]">
+            {{ portalMeta.levelBadge }}
+          </span>
+          <h2 class="text-sm sm:text-base font-black text-slate-900 dark:text-white truncate">
+            {{ portalMeta.title }}
+          </h2>
+        </div>
+
+        <div class="flex items-center space-x-3 text-xs">
+          <p class="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xl">
+            {{ portalMeta.desc }}
+          </p>
+          <span class="px-3 py-1 bg-white/90 dark:bg-dark-800 rounded-full text-slate-800 dark:text-slate-200 font-bold border border-slate-200/80 text-[11px] shadow-2xs whitespace-nowrap">
+            {{ portalMeta.accentBadge }}
+          </span>
+        </div>
+      </div>
     </div>
   </div>
 </template>

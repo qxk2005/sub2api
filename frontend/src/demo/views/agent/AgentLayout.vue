@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
  * 2.10 渠道代理门户 布局框架
+ * 苹果高级灰白配色，左侧菜单独立区分【下级租户管理】与【直营用户管理】
  */
 import DemoNavBar from '../../components/DemoNavBar.vue'
 import { useDemoStore } from '../../stores/useDemoStore'
@@ -9,66 +10,108 @@ const demoStore = useDemoStore()
 </script>
 
 <template>
-  <div class="agent-layout min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col selection:bg-amber-100">
+  <div class="agent-layout min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col selection:bg-blue-100">
     <DemoNavBar />
     
-    <div class="flex-1 flex overflow-hidden max-w-[1400px] w-full mx-auto">
-      <!-- 侧边栏菜单 -->
-      <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col h-[calc(100vh-53px)] sticky top-[53px]">
+    <div class="flex-1 flex overflow-hidden max-w-[1440px] w-full mx-auto">
+      <!-- 侧边栏菜单 (苹果高级灰白极简风格) -->
+      <aside class="w-64 bg-white dark:bg-dark-800 text-slate-700 dark:text-slate-200 border-r border-slate-200/80 dark:border-dark-700 flex flex-col h-[calc(100vh-53px)] sticky top-[53px]">
         <!-- 代理商信息头部 -->
-        <div class="p-4 border-b border-slate-800">
-          <div class="flex items-center space-x-3 mb-1">
-            <div class="w-8 h-8 rounded bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white font-bold shadow-inner">
+        <div class="p-5 border-b border-slate-100 dark:border-dark-700 space-y-3">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-sm">
               {{ demoStore.agent.name.charAt(0) }}
             </div>
             <div>
-              <div class="font-bold text-white text-sm truncate w-40">{{ demoStore.agent.name }}</div>
-              <div class="text-[10px] text-slate-500 font-mono">{{ demoStore.agent.id }}</div>
+              <div class="font-bold text-slate-900 dark:text-white text-sm truncate w-36">{{ demoStore.agent.name }}</div>
+              <div class="text-[10px] text-slate-400 font-mono mt-0.5">{{ demoStore.agent.id }}</div>
             </div>
           </div>
-          <div class="mt-3 flex items-center space-x-2">
-            <span class="px-2 py-0.5 bg-slate-800 rounded text-xs font-medium text-slate-400 border border-slate-700">代理商后台</span>
-            <span class="px-2 py-0.5 bg-amber-900/50 rounded text-xs font-medium text-amber-400 border border-amber-800/50">
+
+          <div class="flex items-center space-x-2 pt-1">
+            <span class="px-2.5 py-0.5 bg-slate-100 dark:bg-dark-700 rounded-full text-[10px] font-bold text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-dark-600">
+              代理商后台
+            </span>
+            <span class="px-2.5 py-0.5 bg-amber-50 dark:bg-amber-950/60 rounded-full text-[10px] font-bold text-amber-700 dark:text-amber-300 border border-amber-200/80">
               👑 {{ demoStore.agent.level }}
             </span>
           </div>
         </div>
 
         <!-- 导航菜单 -->
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          <router-link to="/demo/agent/dashboard" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white" active-class="bg-amber-600 text-white hover:bg-amber-600">
-            <span class="text-lg">📈</span>
-            <span>代理概览</span>
+        <nav class="flex-1 overflow-y-auto py-5 px-3 space-y-1.5">
+          <router-link 
+            to="/demo/agent/dashboard" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">📈</span>
+            <span>代理概览大盘</span>
           </router-link>
           
           <div class="pt-4 pb-1">
-            <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">客户与收益</p>
+            <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">客户架构分类管理</p>
           </div>
-          <router-link to="/demo/agent/clients" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white" active-class="bg-amber-600 text-white hover:bg-amber-600">
-            <span class="text-lg">🤝</span>
-            <span>下级客户管理</span>
+
+          <!-- 1. 下级租户管理 -->
+          <router-link 
+            to="/demo/agent/clients" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">🏢</span>
+            <span>下级租户管理</span>
           </router-link>
-          <router-link to="/demo/agent/pricing" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white" active-class="bg-amber-600 text-white hover:bg-amber-600">
-            <span class="text-lg">🏷️</span>
-            <span>专属费率设置</span>
-          </router-link>
-          <router-link to="/demo/agent/payouts" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white" active-class="bg-amber-600 text-white hover:bg-amber-600">
-            <span class="text-lg">💳</span>
-            <span>佣金与提现</span>
+
+          <!-- 2. 直营用户管理 -->
+          <router-link 
+            to="/demo/agent/direct-users" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">👤</span>
+            <span>直营用户管理</span>
           </router-link>
 
           <div class="pt-4 pb-1">
-            <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">代理资源</p>
+            <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">资费与资金对账</p>
           </div>
-          <router-link to="/demo/agent/pools" class="flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800 hover:text-white" active-class="bg-amber-600 text-white hover:bg-amber-600">
-            <span class="text-lg">🔋</span>
-            <span>专属号池</span>
+
+          <router-link 
+            to="/demo/agent/pricing" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">🏷️</span>
+            <span>专属费率设置</span>
+          </router-link>
+          
+          <router-link 
+            to="/demo/agent/payouts" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">💳</span>
+            <span>佣金与结算提现</span>
+          </router-link>
+
+          <div class="pt-4 pb-1">
+            <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">代理底层资源</p>
+          </div>
+
+          <router-link 
+            to="/demo/agent/pools" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">⚡</span>
+            <span>专属号池与专线</span>
           </router-link>
         </nav>
       </aside>
 
       <!-- 主内容区 -->
-      <main class="flex-1 overflow-y-auto bg-white border-l border-slate-200">
+      <main class="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-dark-900">
         <router-view v-slot="{ Component }">
           <transition name="fade" mode="out-in">
             <component :is="Component" />
