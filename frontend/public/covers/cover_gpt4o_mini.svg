@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_gpt4o_mini" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488"/>
+      <stop offset="50%" stop-color="#1e1b4b"/>
+      <stop offset="100%" stop-color="#312e81"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#bg_gpt4o_mini)"/>
+  <circle cx="200" cy="120" r="160" fill="#14b8a6" opacity="0.35" />
+  <circle cx="650" cy="280" r="190" fill="#818cf8" opacity="0.25" />
+  <path d="M0,250 C300,150 500,350 800,200 L800,400 L0,400 Z" fill="rgba(20, 184, 166, 0.2)" />
+  <path d="M-50,180 C250,80 550,280 850,130" stroke="rgba(255,255,255,0.2)" stroke-width="2" fill="none"/>
+</svg>

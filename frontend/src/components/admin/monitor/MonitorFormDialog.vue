@@ -56,6 +56,9 @@
             {{ t('admin.channelMonitor.form.useCurrentDomain') }}
           </button>
         </div>
+        <p class="mt-1 text-xs text-gray-400">
+          支持标准的 HTTPS 域名与自定义 API 子路径，例如 <code class="text-blue-500 dark:text-blue-400 font-mono font-semibold">https://core.cnfcloud.com/fc-new-api/</code>。
+        </p>
       </div>
 
       <div>

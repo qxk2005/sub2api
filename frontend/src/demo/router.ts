@@ -16,7 +16,7 @@ const demoRoutes: RouteRecordRaw[] = [
       { path: 'docs', name: 'DemoPortalDocs', component: () => import('./views/portal/PortalDocs.vue'), meta: { title: '文档中心 - Sub2API' } },
       { path: 'pricing', name: 'DemoPortalPricing', component: () => import('./views/portal/PortalPricing.vue'), meta: { title: '定价方案 - Sub2API' } },
       { path: 'about', name: 'DemoPortalAbout', component: () => import('./views/portal/PortalAbout.vue'), meta: { title: '关于我们 - Sub2API' } },
-      // 网页版对话机器人 (2.3) 作为官网子路由
+      // 网页版对话机器人 (2.3) 位于官网导航栏下方
       { path: 'chatbot', name: 'DemoPortalChatbot', component: () => import('./views/portal/PortalChatbot.vue'), meta: { title: 'AI 对话助手 - Sub2API' } },
     ]
   },

@@ -75,9 +75,6 @@ func validateEndpoint(ep string) error {
 	if u.Host == "" {
 		return ErrChannelMonitorInvalidEndpoint
 	}
-	if u.Path != "" && u.Path != "/" {
-		return ErrChannelMonitorEndpointPath
-	}
 	if u.RawQuery != "" || u.Fragment != "" {
 		return ErrChannelMonitorEndpointPath
 	}

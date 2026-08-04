@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg_claude_opus" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#31104b"/>
+      <stop offset="50%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="400" fill="url(#bg_claude_opus)"/>
+  <polygon points="400,40 600,200 400,360 200,200" fill="rgba(245, 158, 11, 0.15)" stroke="rgba(245, 158, 11, 0.3)" stroke-width="2" />
+  <circle cx="200" cy="100" r="140" fill="#a855f7" opacity="0.3" />
+  <circle cx="650" cy="280" r="170" fill="#f59e0b" opacity="0.25" />
+</svg>

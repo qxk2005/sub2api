@@ -8,15 +8,15 @@ import { ref, computed } from 'vue'
 export const useDemoStore = defineStore('demo', () => {
   // ============ 模型列表 Mock 数据 ============
   const models = ref([
-    { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', capability: ['文本', '视觉', '代码'], context: '128K', price: { input: 2.50, output: 10.00 }, badge: '热门' },
-    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI', capability: ['文本', '代码'], context: '128K', price: { input: 0.15, output: 0.60 }, badge: '性价比' },
-    { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', capability: ['文本', '视觉', '代码'], context: '200K', price: { input: 3.00, output: 15.00 }, badge: '最强代码' },
-    { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', capability: ['文本', '视觉', '推理'], context: '200K', price: { input: 15.00, output: 75.00 }, badge: '' },
-    { id: 'gemini-1-5-pro', name: 'Gemini 1.5 Pro', provider: 'Google', capability: ['文本', '视觉', '长文档'], context: '1M', price: { input: 1.25, output: 5.00 }, badge: '超长上下文' },
-    { id: 'gemini-2-0-flash', name: 'Gemini 2.0 Flash', provider: 'Google', capability: ['文本', '代码'], context: '1M', price: { input: 0.10, output: 0.40 }, badge: '极速' },
-    { id: 'deepseek-v3', name: 'DeepSeek V3', provider: 'DeepSeek', capability: ['文本', '代码', '推理'], context: '64K', price: { input: 0.27, output: 1.10 }, badge: '国产之光' },
-    { id: 'grok-3', name: 'Grok-3', provider: 'xAI', capability: ['文本', '推理'], context: '128K', price: { input: 3.00, output: 15.00 }, badge: '' },
-    { id: 'dall-e-3', name: 'DALL·E 3', provider: 'OpenAI', capability: ['图像生成'], context: '-', price: { input: 40.00, output: 0 }, badge: '图像' },
+    { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', capability: ['文本', '视觉', '代码'], context: '128K', price: { input: 2.50, output: 10.00 }, badge: '热门', cover: '/covers/cover_gpt4o.svg' },
+    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI', capability: ['文本', '代码'], context: '128K', price: { input: 0.15, output: 0.60 }, badge: '性价比', cover: '/covers/cover_gpt4o_mini.svg' },
+    { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', capability: ['文本', '视觉', '代码'], context: '200K', price: { input: 3.00, output: 15.00 }, badge: '最强代码', cover: '/covers/cover_claude35.svg' },
+    { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', capability: ['文本', '视觉', '推理'], context: '200K', price: { input: 15.00, output: 75.00 }, badge: '', cover: '/covers/cover_claude3_opus.svg' },
+    { id: 'gemini-1-5-pro', name: 'Gemini 1.5 Pro', provider: 'Google', capability: ['文本', '视觉', '长文档'], context: '1M', price: { input: 1.25, output: 5.00 }, badge: '超长上下文', cover: '/covers/cover_gemini_pro.svg' },
+    { id: 'gemini-2-0-flash', name: 'Gemini 2.0 Flash', provider: 'Google', capability: ['文本', '代码'], context: '1M', price: { input: 0.10, output: 0.40 }, badge: '极速', cover: '/covers/cover_gemini_flash.svg' },
+    { id: 'deepseek-v3', name: 'DeepSeek V3', provider: 'DeepSeek', capability: ['文本', '代码', '推理'], context: '64K', price: { input: 0.27, output: 1.10 }, badge: '国产之光', cover: '/covers/cover_deepseek_v3.svg' },
+    { id: 'grok-3', name: 'Grok-3', provider: 'xAI', capability: ['文本', '推理'], context: '128K', price: { input: 3.00, output: 15.00 }, badge: '', cover: '/covers/cover_grok3.svg' },
+    { id: 'dall-e-3', name: 'DALL·E 3', provider: 'OpenAI', capability: ['图像生成'], context: '-', price: { input: 40.00, output: 0 }, badge: '图像', cover: '/covers/cover_dalle3.svg' },
   ])
 
   // ============ 套餐 Mock 数据 ============
