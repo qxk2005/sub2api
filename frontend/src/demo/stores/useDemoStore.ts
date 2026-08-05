@@ -153,47 +153,69 @@ export const useDemoStore = defineStore('demo', () => {
     { name: 'OpenClaw', icon: '🐾', path: 'Not Found', status: 'not_found', bound: false },
   ])
 
-  // ============ 平台管理员 FRS 子项映射 ============
+  // ============ 平台管理员 FRS V3.4 全量子项映射 ============
   const platformAdminItems = ref([
-    // 2.1 中转站中台
-    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.1', name: 'API 接口协议转换', route: '/admin/channels/pricing', status: 'fulfilled', desc: '支持 OpenAI/Claude/Gemini/Grok 协议自动转换', guide: '进入【渠道管理 -> 渠道列表】，在创建或编辑渠道时选择对应提供商（OpenAI/Anthropic/Gemini/Grok）。网关会自动把接收到的统一 OpenAI 接口请求流式转换为目标厂商的专用 API 协议。' },
-    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.2', name: '智能路由与负载均衡', route: '/admin/settings', status: 'fulfilled', desc: '内置轮询、权重与并发调度算法', guide: '在【系统设置 -> 实验调度策略】中可配置多维加权算法（包括优先级权重、负载权重、错误率权重及 TTFT 延迟权重）；在【账号管理】中可为每个上游账号独立设置 Priority 优先级与权重倍率。' },
-    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.3', name: 'API Key 鉴权与额度校验', route: '/keys', status: 'fulfilled', desc: '秒级验证 Key 合法性、余额及权限', guide: '进入左侧侧边栏【API 密钥】 (页面：/keys) 或【用户管理】(/admin/users)。在此可生成/管理 API Key，并为其设置单独的消费额度、模型白名单与 IP 限制；网关在收到请求时自动完成微秒级鉴权与余额校验。' },
+    // 2.1 中转站中台 (Platform)
+    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.1', name: 'API 接口协议转换', route: '/admin/channels/pricing', status: 'fulfilled', desc: '支持 OpenAI / Anthropic Claude / Google Gemini / Grok 协议微秒级双向转换', guide: '进入【渠道管理 -> 渠道列表】，在创建或编辑渠道时选择对应提供商。网关会自动把接收到的标准 OpenAI 格式请求实时转换为目标厂商的专用 API 协议。' },
+    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.2', name: '智能路由与负载均衡', route: '/admin/settings', status: 'fulfilled', desc: '内置轮询、权重与并发调度算法，自适应选路', guide: '在【系统设置 -> 实验调度策略】中可配置多维加权算法（包含优先级权重、负载权重、错误率权重及 TTFT 延迟权重）；在【账号管理】中可为每个上游账号独立设置 Priority 优先级与权重倍率。' },
+    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.3', name: 'API Key 鉴权与额度校验', route: '/keys', status: 'fulfilled', desc: '秒级验证 Key 合法性、余额及权限限制', guide: '进入侧边栏【API 密钥 (/keys)】或【用户管理】。可生成/管理 API Key，为其设置单独的消费额度、模型白名单与 IP 限制；网关收到请求时完成微秒级鉴权。' },
     { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.4', name: '调用日志与明细查询', route: '/admin/usage', status: 'fulfilled', desc: '全链路调用日志记录与敏感数据脱敏', guide: '进入【日志/用量统计】页面，筛选查看所有请求的时间、请求/响应 Token 数量、响应时延及状态码。' },
-    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.5', name: '频率限制（Rate Limit）与熔断', route: '/admin/channels/monitor', status: 'fulfilled', desc: '自动限流与熔断，P95≤50ms', guide: '进入【渠道监控】页面查看实时 QPS。当某个渠道持续报 5xx 或响应超时时，自动触发熔断暂停分发。' },
+    { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.5', name: '频率限制（Rate Limit）与熔断', route: '/admin/channels/monitor', status: 'fulfilled', desc: '自动限流与熔断机制，P95 ≤ 50ms', guide: '进入【渠道监控】页面查看实时 QPS。当某个渠道持续报 5xx 或响应超时时，自动触发熔断暂停分发。' },
 
-    // 2.5 核心网关能力（安全合规与敏感词护栏）
-    { chapter: '2.5', chapterName: '2.5 核心网关能力补全', section: '2.5.1', name: '安全敏感词护栏', route: '/demo/admin/sensitive-words', status: 'fulfilled', desc: '输入/输出双向实时敏感词拦截，对接网信办词库', guide: '进入【安全敏感词护栏】DEMO 页面，管理词库规则（支持热增加/删除），查看实时审计日志，配置双向拦截开关与 Webhook 通知。' },
+    // 2.2 一键部署客户端 (Desktop)
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.1', name: '无边框窗体与系统托盘', route: '/demo/desktop', status: 'fulfilled', desc: '仿真 Windows/macOS 沉浸式桌面客户端窗体', guide: '进入【桌面客户端 DEMO (/demo/desktop)】，体验轻量无边框窗体、系统托盘右键快捷选单及最小化悬浮球。' },
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.2', name: '多线路与多账号快捷切换', route: '/demo/desktop', status: 'fulfilled', desc: '支持一键切换生产线路与 API 节点', guide: '在桌面客户端左侧菜单点击【🔀 线路/Key 切换】，可查看当前激活线路并一键无缝切换上游专线。' },
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.3', name: '环境一键注入', route: '/demo/desktop', status: 'fulfilled', desc: '自动检测与一键配置 Cursor/Copilot/Claude 等开发环境', guide: '在桌面客户端侧边栏点击【🔌 环境一键注入】，可自动读取本地 IDE 配置文件并完成代理 Endpoint 写入。' },
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.4', name: '延迟测速大盘', route: '/demo/desktop', status: 'fulfilled', desc: '多节点实时 Ping/TTFT 延时检测', guide: '在桌面客户端点击【📊 延迟测速大盘】，可一键并发发起全网节点 Ping 测试并直观呈现节点健康度与延迟。' },
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.6', name: '日志与白话抓包', route: '/demo/desktop', status: 'fulfilled', desc: '实时监听本地请求，可视化解析 Header 与 Body', guide: '在桌面客户端点击【🔍 日志与白话抓包】，实时截获本地 IDE 发出的请求并以人性化白话格式拆解参数。' },
+    { chapter: '2.2', chapterName: '2.2 一键部署客户端', section: '2.2.7', name: '聊天机器人客户端', route: '/demo/desktop', status: 'fulfilled', desc: '客户端内置沉浸式 AI 对话助手界面', guide: '在桌面客户端左侧菜单默认激活【🤖 聊天机器人】，支持挑选模型、Prompt 快捷预设及多轮对话体验。' },
 
-    // 2.6 财务账单系统
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.1', name: '用量计量（多级穿透分账）', route: '/admin/usage', status: 'partial', desc: '按 Prompt/Completion/Cached Tokens 精确扣费', guide: '在【用量统计】中可穿透查看用户、代理商与平台的原始输入/输出/缓存 Tokens 消费和金额扣减记录。' },
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.2', name: '日/周/月账单推送', route: '/admin/usage', status: 'partial', desc: '定时汇总用量生成账单报告', guide: '在【用量统计】中选择不同时间维度（日/周/月）进行统计汇总，可配置定时发送对账邮件报告。' },
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.3', name: '账单可视化', route: '/admin/dashboard', status: 'fulfilled', desc: '消费趋势图、模型占比饼图', guide: '进入【控制台首页 (Dashboard)】，查阅核心图形大盘：包括模型消费比例饼图、近30日消耗折线图及收入分析。' },
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.4', name: '账单导出 CSV/PDF', route: '/admin/usage', status: 'partial', desc: '支持一键导出消费对账单', guide: '在【用量明细】页面顶部过滤指定用户或范围后，点击右上角【导出 CSV/PDF】下载财务核算明细。' },
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.5', name: '余额预警与欠费停服', route: '/admin/settings', status: 'fulfilled', desc: '余额低于预警线触发多渠道通知', guide: '在【系统设置 -> 提醒设置】中配置阈值。当用户余额不足时自动触发邮件提醒；余额耗尽后禁止 API 调用。' },
-    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.6', name: '充值与支付渠道对接', route: '/admin/orders', status: 'partial', desc: '在线充值集成微信/支付宝', guide: '进入【订单管理】与【支付通道】查看用户充值记录，配置微信支付/支付宝/易支付等商户对接秘钥。' },
+    // 2.3 网页版对话机器人 (Web Chatbot)
+    { chapter: '2.3', chapterName: '2.3 网页版对话机器人', section: '2.3.1', name: '沉浸式对话界面', route: '/demo/portal/chatbot', status: 'fulfilled', desc: '全屏对话窗口，支持流式响应与 Markdown 渲染', guide: '进入【网页对话机器人 DEMO (/demo/portal/chatbot)】，体验现代化聊天界面、打字机流式输出与代码高亮。' },
+    { chapter: '2.3', chapterName: '2.3 网页版对话机器人', section: '2.3.2', name: '智能模型推荐引擎', route: '/demo/portal/chatbot', status: 'fulfilled', desc: '根据任务类型自动推荐最佳模型组合', guide: '在网页对话框顶部选择任务分类标签（如代码编写、文档整理、图片分析），系统自动切换最贴合的 AI 模型。' },
+    { chapter: '2.3', chapterName: '2.3 网页版对话机器人', section: '2.3.3', name: '多模态文件上传处理', route: '/demo/portal/chatbot', status: 'fulfilled', desc: '支持图片、文档附件解析与 Vision 识别', guide: '在对话框点击附件按钮上传图片或文档，即可调用多模态模型完成图像视觉识别与文本分析。' },
 
-    // 2.7 账号体系与权限管理
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.1', name: '多租户架构', route: '/admin/groups', status: 'pending', desc: '四级分层架构与数据隔离', guide: '在【分组管理 (Groups)】中配置不同用户组/租户的独立共享配额、策略模板与专属渠道绑定。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.2', name: '角色体系（RBAC）', route: '/admin/users', status: 'partial', desc: '四级分层 RBAC 权限矩阵', guide: '在【用户管理】列表中找到目标用户，点击操作栏的【修改角色】，可在系统管理员、代理商、租户管理员间切换。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.3', name: '细粒度权限控制', route: '/admin/users', status: 'pending', desc: '模块级、功能级、数据级权限', guide: '在【用户编辑】弹窗中针对特定的模型列表进行勾选授权，限制用户仅能访问指定 AI 模型。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.4', name: '组织 Key 管理', route: '/keys', status: 'partial', desc: '企业租户管理员统一管理组织级 API Key', guide: '进入【API 密钥】页面，以企业管理员身份批量生成和分发组织级 API Key。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.5', name: '登录安全与角色强制2FA', route: '/admin/settings', status: 'pending', desc: '关键角色强制双因素认证', guide: '在【系统设置 -> 安全策略】中为管理员与代理商角色启用强制 2FA 绑定策略。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.6', name: '子账号批量开户', route: '/admin/users', status: 'pending', desc: '企业管理员批量为员工创建子账号与配额', guide: '在【用户管理 -> 批量开户】上传 CSV 模板一键批量创建子账号。' },
-    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.7', name: '租户/用户专属门户', route: '/demo/tenant/user-portal', status: 'pending', desc: '租户管理员门户与员工个人门户分层展示', guide: '进入【企业租户控制台 -> 我的专属门户】，以员工/普通用户身份查看个人 Key、用量、可用模型。' },
+    // 2.4 官方门户网站 (Portal)
+    { chapter: '2.4', chapterName: '2.4 官方门户网站', section: '2.4.1', name: '官网首页与核心特性宣发', route: '/demo/portal', status: 'fulfilled', desc: '品牌官网首页，展现四级架构与核心卖点', guide: '进入【官网门户 (/demo/portal)】，浏览最新平台特性宣发、产品痛点对比及产品演示入口。' },
+    { chapter: '2.4', chapterName: '2.4 官方门户网站', section: '2.4.2', name: '模型广场与价格估算器', route: '/demo/portal/models', status: 'fulfilled', desc: '收录最新主流 AI 模型参数与试算器', guide: '进入【模型广场 (/demo/portal/models)】，查阅目前支持的模型清单，并通过动态算盘实时估算月度消费。' },
+    { chapter: '2.4', chapterName: '2.4 官方门户网站', section: '2.4.3', name: '开发者文档中心', route: '/demo/portal/docs', status: 'fulfilled', desc: '三步快速接入指南与 API 调优文档', guide: '进入【文档中心 (/demo/portal/docs)】，阅读统一 SDK 快速替换指南与常用环境变量配置样例。' },
+    { chapter: '2.4', chapterName: '2.4 官方门户网站', section: '2.4.4', name: '定价方案与分销引导', route: '/demo/portal/pricing', status: 'fulfilled', desc: '订阅套餐与代理商加盟政策矩阵', guide: '进入【定价方案 (/demo/portal/pricing)】，查阅基础版、专业版、企业订阅价格对比及渠道代理分销政策。' },
 
-    // 2.8 上游号池与渠道管理
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.1', name: '渠道接入管理', route: '/admin/channels/pricing', status: 'fulfilled', desc: '新增/编辑/停用上游渠道', guide: '进入【渠道管理】，点击右上角【创建渠道】，填写渠道名称、Base URL 与 API Key 建立连接。' },
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.2', name: '号池与 Key 权重/优先级管理', route: '/admin/accounts', status: 'fulfilled', desc: '批量导入上游 Key、分组管理与优先级控制', guide: '进入【账号管理】(即上游号池/Key管理)，在列表中可为每个账号单独配置【优先级 (Priority)】与【权重倍率】，并支持批量导入与自动检测。' },
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.3', name: '模型映射配置', route: '/admin/channels/pricing', status: 'fulfilled', desc: '上游模型与平台标识映射', guide: '在渠道配置中的【模型重定向/映射】文本框填入例如 `gpt-4o: gpt-4o-2024-08-06` 即可完成上游映射。' },
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.4', name: '实时监控大盘', route: '/admin/channels/monitor', status: 'fulfilled', desc: 'QPS、成功率、时延、剩余额度', guide: '点击进入【渠道监控】大盘，可以实时查阅全局 QPS 波动曲线、各渠道延迟分布柱状图及失败率统计。' },
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.5', name: '告警规则配置', route: '/admin/ops', status: 'fulfilled', desc: '失败率飙升、额度不足自动告警', guide: '在【系统设置/运维】中配置通知 Webhook，当上游渠道连续报错 N 次或额度耗尽时自动发送钉钉/飞书告警。' },
-    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.6', name: '渠道健康度评分', route: '/admin/channels/monitor', status: 'fulfilled', desc: '自动打分与调度权重建议', guide: '在【渠道监控】大盘的渠道列表第一列查看健康度 Score（综合延时、可用率自动打分），便于管理员一键优化权重。' },
+    // 2.5 核心网关能力 (Gateway)
+    { chapter: '2.5', chapterName: '2.5 核心网关能力补全', section: '2.5.1', name: '安全敏感词合规护栏', route: '/demo/admin/sensitive-words', status: 'fulfilled', desc: '输入/输出双向实时敏感词拦截，对接网信办标准词库', guide: '进入【安全敏感词护栏 DEMO (/demo/admin/sensitive-words)】，体验词库规则热管理、双向拦截开关与实时安全审计日志。' },
 
-    // 2.10 渠道代理与分销管理
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.1', name: '代理账户审核（平台侧）', route: '/admin/affiliates/invites', status: 'partial', desc: '代理申请审核与分级管理', guide: '进入【返佣与代理管理】，查阅提交代理申请的用户列表，点击【通过审核】并设置其代理级别与分销码。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.2', name: '专属号池分配（平台侧）', route: '/admin/channels/pricing', status: 'pending', desc: '为代理划拨专属号池资源', guide: '在【渠道管理 -> 渠道分组】中选择【代理专享】，勾选要划拨的独立上游渠道或物理服务器节点。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.3', name: '专属费率配置（平台侧）', route: '/admin/groups', status: 'partial', desc: '为代理配置差异化溢价率', guide: '在【分组管理】中为代理分组设置独立的“结算折扣比率”，如给予一级代理 7 折结算优惠。' },
+    // 2.6 财务账单系统 (Billing)
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.1', name: '用量计量（多级穿透分账）', route: '/demo/tenant/billing', status: 'fulfilled', desc: '按 Prompt / Completion / Cached Tokens 精确穿透扣费', guide: '进入【企业租户 - 财务与账单 (/demo/tenant/billing)】，查阅消费明细表，精准穿透至每次请求的输入、输出及缓存 Token 扣费。' },
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.2', name: '日/周/月账单推送与报表', route: '/demo/tenant/billing', status: 'fulfilled', desc: '定时汇总用量并生成多维度分析报表', guide: '在【财务与账单】页面可切换计费周期（按日/按周/按月），直观呈现不同时间跨度的企业消耗曲线。' },
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.3', name: '账单可视化图形大盘', route: '/demo/tenant/billing', status: 'fulfilled', desc: '消费趋势折线图、模型占比饼图及团队额度分布', guide: '在【财务与账单】顶部数据看板查阅核心图表：模型消耗比例、各部门 Token 分布及月度消费趋势。' },
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.4', name: '账单导出 CSV / PDF', route: '/demo/tenant/billing', status: 'fulfilled', desc: '支持一键导出财务对账单与凭证', guide: '在【财务与账单】页面右上角点击【导出 CSV/PDF】，快速下载规范的企业对账单凭证。' },
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.5', name: '余额预警与欠费停服', route: '/demo/tenant/billing', status: 'fulfilled', desc: '低于临界阈值触发预警，耗尽自动阻断', guide: '在【财务与账单】顶部查看余额预警线配置（如低至 ¥100 自动触发告警），余额归零后 API 请求自动阻断。' },
+    { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.6', name: '充值与支付渠道对接', route: '/admin/orders', status: 'partial', desc: '在线充值集成微信支付/支付宝/易支付', guide: '进入【订单管理 (/admin/orders)】查看用户充值记录，配置在线支付通道和价格套餐。' },
+
+    // 2.7 账号体系与权限管理 (Tenant)
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.1', name: '四级分层多租户架构', route: '/demo/tenant/dashboard', status: 'fulfilled', desc: '平台-代理-租户-终端用户四级隔离与配额控制', guide: '进入【企业租户控制台 (/demo/tenant/dashboard)】，查看企业总配额划拨、子账号用量看板及四级数据隔离隔离。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.2', name: '角色体系（RBAC）', route: '/admin/users', status: 'fulfilled', desc: '细粒度 RBAC 权限矩阵控制', guide: '进入【用户管理 (/admin/users)】列表，在操作栏点击【修改角色】，可在系统管理员、代理商、租户管理员间无缝切换。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.3', name: '细粒度权限控制', route: '/demo/tenant/keys', status: 'fulfilled', desc: '模块级、功能级、模型级访问白名单限制', guide: '进入【API Key 管理 (/demo/tenant/keys)】，在编辑弹窗中勾选模型白名单及配置单个 Key 的最高并发额度。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.4', name: '组织级 Key 统一管理', route: '/demo/tenant/keys', status: 'fulfilled', desc: '企业租户管理员统一分发与监控组织 Key', guide: '进入【API 密钥 (/demo/tenant/keys)】，以企业管理员身份批量生成、停用及分发部门级 API Key。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.5', name: '登录安全与角色强制 2FA', route: '/demo/tenant/security', status: 'fulfilled', desc: '关键角色强制双因素认证与 IP 白名单', guide: '进入【安全设置 (/demo/tenant/security)】，开启 2FA 强认证模式、配置 SSO 单点登录与控制台 IP 白名单。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.6', name: '员工与子账号批量开户', route: '/demo/tenant/employees', status: 'fulfilled', desc: '企业管理员批量划拨子账号配额与权限', guide: '进入【员工管理 (/demo/tenant/employees)】，批量邀请员工加入企业租户，并独立划拨每个员工的月度 Token 限额。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.7', name: '租户/用户专属门户', route: '/demo/tenant/user-portal', status: 'fulfilled', desc: '租户管理员门户与员工个人门户分层展示', guide: '进入【租户/用户专属门户 (/demo/tenant/user-portal)】，体验普通员工/终端用户视角的个人 Key、用量明细与模型白名单。' },
+
+    // 2.8 上游号池与渠道管理 (Platform)
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.1', name: '上游渠道接入管理', route: '/admin/channels/pricing', status: 'fulfilled', desc: '新增、编辑与停用上游 Provider 渠道', guide: '进入【渠道管理 (/admin/channels/pricing)】，点击【创建渠道】，填入上游 Base URL 与 API Key 完成接入。' },
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.2', name: '号池与 Key 权重/优先级管理', route: '/admin/accounts', status: 'fulfilled', desc: '批量导入 Key，独立设置 Priority 优先级与权重', guide: '进入【账号管理 (/admin/accounts)】，在账号列表中独立调整各个 Key 的优先级 (Priority) 与权重倍率。' },
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.3', name: '模型映射与重定向配置', route: '/admin/channels/pricing', status: 'fulfilled', desc: '平台统一模型标识与上游真实模型重定向映射', guide: '在渠道编辑弹窗的【模型重定向】配置中填入 `gpt-4o: gpt-4o-2024-08-06` 即可完成上游模型别名映射。' },
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.4', name: '渠道实时监控大盘', route: '/admin/channels/monitor', status: 'fulfilled', desc: '全局 QPS 曲线、时延分布柱状图及成功率分析', guide: '进入【渠道监控 (/admin/channels/monitor)】大盘，查阅全站实时 QPS 波动曲线及各渠道延时柱状图。' },
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.5', name: '运维与告警规则配置', route: '/admin/ops', status: 'fulfilled', desc: '失败率飙升或额度不足时发送多渠道通知告警', guide: '进入【运维监控 (/admin/ops)】配置通知 Webhook，当上游连续报错或余额耗尽时触发钉钉/飞书告警。' },
+    { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.6', name: '渠道健康度自动评分', route: '/admin/channels/monitor', status: 'fulfilled', desc: '根据延时与成功率自动打分，辅助自动降级选路', guide: '在【渠道监控】列表中查阅每个渠道的健康度 Score 分数（根据 P95 延迟与成功率动态算法实时计算）。' },
+
+    // 2.10 渠道代理与分销管理 (Agent)
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.1', name: '代理概览与邀请分销', route: '/demo/agent/dashboard', status: 'fulfilled', desc: '专属邀请链接、返佣阶梯与收益转化漏斗', guide: '进入【代理商控制台 (/demo/agent/dashboard)】，查看专属分销邀请链接、本月预估佣金及返佣阶梯规则。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.2', name: '专属隔离号池分配', route: '/demo/agent/pools', status: 'fulfilled', desc: '平台划拨的代理专属物理隔离号池与运行状态', guide: '进入【代理专属号池 (/demo/agent/pools)】，查阅平台为其分配的隔离号池资源（如 VIP 专属池、高并发 GPU 池）。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.3', name: '专属费率与多维度加价配置', route: '/demo/agent/pricing', status: 'fulfilled', desc: '支持针对直营用户与下级企业租户独立设置加价与号池底价穿透', guide: '进入【专属费率 (/demo/agent/pricing)】，为【直营个人用户】与【下级企业租户】分别设定独立加价率，并绑定号池底价算术测算利润。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.4', name: '阶梯返佣规则与分销大盘', route: '/demo/agent/dashboard', status: 'fulfilled', desc: '按销售额阶梯自动计算返佣比例', guide: '在【代理概览】中查阅当前的返佣阶梯（如 ¥0~5,000 为 8%，¥50,001+ 为 20%）及历史结算明细。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.5', name: '下级客户管理与维护', route: '/demo/agent/clients', status: 'fulfilled', desc: '维护下级企业租户与直营用户档案与消耗占比', guide: '进入【下级租户管理 (/demo/agent/clients)】与【直营用户 (/demo/agent/direct-users)】，查阅客户月度消耗与激活状态。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.6', name: '双向结算与精准对账单', route: '/demo/agent/payouts', status: 'fulfilled', desc: '平台-代理 & 代理-下游客户双向自动对账大盘', guide: '进入【结算与双向对账 (/demo/agent/payouts)】，在 Tab 1 查看代理与平台的底层结算单，在 Tab 2 查看代理与下游客户的加价账单。' },
   ])
 
   // ============ Toast 通知 ============

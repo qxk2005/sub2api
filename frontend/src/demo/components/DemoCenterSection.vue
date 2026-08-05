@@ -66,7 +66,7 @@ const goAdminRoute = (item: { route: string; name: string; guide: string }) => {
           </div>
           <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-2">平台运营管理员</h3>
           <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 flex-1">
-            体验底层计费、智能调度、渠道号池管理等 6 大核心模块配置能力。
+            体验中转中台、安全合规、桌面客户端、租户权限、财务对账与渠道代理等 9 大核心模块 FRS V3.4 配置能力。
           </p>
           <div class="text-blue-600 dark:text-blue-400 text-sm font-medium flex items-center justify-between">
             <span>{{ showPlatformAdmin ? '收起二级章节清单' : '按二级章节查看清单' }}</span>
