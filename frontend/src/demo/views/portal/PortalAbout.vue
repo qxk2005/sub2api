@@ -57,7 +57,7 @@ const submitTicket = () => {
           <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center text-xl font-bold">⚡️</div>
           <h3 class="font-bold text-base text-slate-900 dark:text-white">SLA 99.9% 稳定保障</h3>
           <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-            多机房节点冗余，Engine A 故障自动熔断与秒级 Failover 重试，保障业务连续性。
+            多机房节点冗余，安全敏感词双向合规护栏实时过滤，故障自动熔断与秒级 Failover 重试，保障业务连续性。
           </p>
         </div>
 

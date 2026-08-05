@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
  * 演示中心入口卡片组件 (嵌入到 HomeView.vue 中)
- * 支持 FRS V3.0 平台运营管理员二级章节分组与操作指引
+ * 支持 FRS V3.4 平台运营管理员二级章节分组与操作指引
  * 所有功能链接均在新窗口打开 (_blank)，避免回退重走流程
  */
 import { ref, computed } from 'vue'
@@ -27,8 +27,15 @@ const filteredChapters = computed(() => {
 // 在新窗口打开真实的后台路由并提示操作指引
 const goAdminRoute = (item: { route: string; name: string; guide: string }) => {
   demoStore.showToast(`已在新窗口打开【${item.name}】！操作指引：${item.guide}`)
-  const routeUrl = router.resolve(item.route).href
-  window.open(routeUrl, '_blank')
+  if (item.route.startsWith('/demo/')) {
+    // DEMO 页面：直接用 router 解析
+    const routeUrl = router.resolve(item.route).href
+    window.open(routeUrl, '_blank')
+  } else {
+    // 真实后端页面
+    const routeUrl = router.resolve(item.route).href
+    window.open(routeUrl, '_blank')
+  }
 }
 </script>
 
@@ -41,7 +48,7 @@ const goAdminRoute = (item: { route: string; name: string; guide: string }) => {
     <div class="relative z-10 px-8 md:px-12">
       <div class="text-center mb-12">
         <span class="inline-block px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-full text-sm font-semibold tracking-wide mb-4 border border-blue-100 dark:border-blue-500/20">
-          FRS V3.0 验证演示
+          FRS V3.4 验证演示
         </span>
         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4">产品功能演示中心</h2>
         <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
@@ -123,11 +130,11 @@ const goAdminRoute = (item: { route: string; name: string; guide: string }) => {
         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-dark-700">
           <div>
             <h3 class="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <span>系统管理员配置能力清单 (FRS V3.0)</span>
+              <span>系统管理员配置能力清单 (FRS V3.4)</span>
               <span class="px-2.5 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs rounded-full font-mono font-semibold">二级章节分组版</span>
             </h3>
             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-              按照 FRS V3.0 规范的二级章节分组展示。每个子项均提供**明确的后台具体操作说明**，点击可在新窗口打开查阅与验证。
+              按照 FRS V3.4 规范的二级章节分组展示。每个子项均提供**明确的后台具体操作说明**，点击可在新窗口打开查阅与验证。
             </p>
           </div>
           <div class="mt-4 sm:mt-0 text-sm font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 px-3 py-1.5 rounded-lg border border-amber-200/50 dark:border-amber-800/40">

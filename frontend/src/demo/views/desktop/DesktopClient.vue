@@ -1,13 +1,13 @@
 <script setup lang="ts">
 /**
- * FRS V3.0 2.2 一键部署客户端 (Windows / macOS 专属客户端 Demo 仿真)
- * 完整覆盖 2.2.1 ~ 2.2.6 全部子功能
+ * FRS V3.4 2.2 一键部署客户端 (Windows / macOS 专属客户端 Demo 仿真)
+ * 完整覆盖 2.2.1 ~ 2.2.7 全部子功能
  */
 import { ref } from 'vue'
 
 // 窗口状态控制
 const isMaximized = ref(false)
-const activeTab = ref<'chat' | 'profiles' | 'inject' | 'speedtest' | 'traffic' | 'settings'>('chat')
+const activeTab = ref<'profiles' | 'inject' | 'speedtest' | 'traffic' | 'settings' | 'chatbot'>('chatbot')
 
 // 托盘控制面板 (2.2.1)
 const isTrayOpen = ref(false)
@@ -146,6 +146,32 @@ const showToast = (msg: string) => {
     toastVisible.value = false
   }, 3000)
 }
+
+// 聊天机器人客户端 (2.2.7)
+const chatbotModel = ref('Claude 3.5 Sonnet')
+const chatbotModels = ['GPT-4o', 'GPT-4o Mini', 'Claude 3.5 Sonnet', 'Gemini 2.0 Flash', 'DeepSeek V3']
+const chatbotInput = ref('')
+interface ChatMessage {
+  id: number
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  model?: string
+  time: string
+}
+const chatbotMessages = ref<ChatMessage[]>([
+  { id: 1, role: 'assistant', content: '你好！我是 Sub2API 桌面客户端内置的 AI 助手。请随时向我提问，我会通过当前激活的线路与 Key 调用底层模型为您服务。', model: 'Claude 3.5 Sonnet', time: '14:20' },
+])
+let chatIdCounter = 2
+const sendChatbotMessage = () => {
+  const text = chatbotInput.value.trim()
+  if (!text) return
+  chatbotMessages.value.push({ id: chatIdCounter++, role: 'user', content: text, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) })
+  chatbotInput.value = ''
+  setTimeout(() => {
+    chatbotMessages.value.push({ id: chatIdCounter++, role: 'assistant', content: `这是来自 **${chatbotModel.value}** 的模拟响应。在真实环境中，此请求会通过当前激活的线路（${activeProfile.value.endpoint}）转发至上游模型。`, model: chatbotModel.value, time: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' }) })
+  }, 600)
+}
+const chatbotQuickPrompts = ['💬 简单对话', '💻 代码编写', '📄 文档整理', '🌐 翻译润色']
 </script>
 
 <template>
@@ -259,11 +285,14 @@ const showToast = (msg: string) => {
             </div>
 
             <button 
-              @click="activeTab = 'chat'"
-              :class="['w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2.5 transition-all', activeTab === 'chat' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200']"
+              @click="activeTab = 'chatbot'"
+              :class="['w-full px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-all', activeTab === 'chatbot' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:bg-slate-800/60 hover:text-slate-200']"
             >
-              <span class="text-base">💬</span>
-              <span>桌面对话体验</span>
+              <div class="flex items-center gap-2.5">
+                <span class="text-base">🤖</span>
+                <span>聊天机器人</span>
+              </div>
+              <span class="text-[10px] px-1.5 py-0.2 bg-white/20 rounded font-mono">2.2.7</span>
             </button>
 
             <button 
@@ -333,39 +362,8 @@ const showToast = (msg: string) => {
         <!-- 右侧主内容展示面板 -->
         <div class="flex-1 bg-slate-900/60 p-6 md:p-8 overflow-y-auto custom-scrollbar">
           
-          <!-- TAB 1: 桌面对话体验 -->
-          <div v-if="activeTab === 'chat'" class="h-full flex flex-col justify-between">
-            <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-              <div>
-                <h3 class="text-lg font-bold text-white">AI 极速对话助理</h3>
-                <p class="text-xs text-slate-400">双击即用，通过当前激活线路 ({{ activeProfile.name }}) 直连底层网关。</p>
-              </div>
-              <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-mono font-bold">GPT-4o / Claude 3.5</span>
-            </div>
-
-            <div class="my-8 flex-1 flex flex-col items-center justify-center text-center">
-              <div class="w-16 h-16 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-xl">
-                ✨
-              </div>
-              <h4 class="text-xl font-bold text-white mb-2">今天需要完成什么任务？</h4>
-              <p class="text-xs text-slate-400 max-w-md leading-relaxed">
-                客户端已自动集成环境代理监听 (:10808)。您可以直接对话，或切换左侧菜单使用【一键环境注入】或【延迟测速大盘】。
-              </p>
-            </div>
-
-            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
-              <textarea rows="3" placeholder="给 AI 发送消息... (快捷键 Alt + 空格唤起全局悬浮框)" class="w-full bg-transparent outline-none text-xs text-white resize-none"></textarea>
-              <div class="flex justify-between items-center pt-2 border-t border-slate-800/80">
-                <span class="text-[11px] text-slate-500 font-mono">当前节点: {{ activeProfile.endpoint }}</span>
-                <button class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-blue-600/30">
-                  发送消息
-                </button>
-              </div>
-            </div>
-          </div>
-
           <!-- TAB 2: 多节点/多账号快捷切换 (2.2.2) -->
-          <div v-else-if="activeTab === 'profiles'" class="space-y-6">
+          <div v-if="activeTab === 'profiles'" class="space-y-6">
             <div>
               <div class="flex items-center gap-2 mb-1">
                 <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded text-xs font-mono font-bold">子项 2.2.2</span>
@@ -634,6 +632,64 @@ const showToast = (msg: string) => {
 
               <div v-else class="p-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-xl text-xs text-center font-bold">
                 ✓ 当前客户端已是最新版本 ({{ currentVersion }})，无需更新。
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 7: 聊天机器人客户端 (2.2.7) -->
+          <div v-else-if="activeTab === 'chatbot'" class="h-full flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <h3 class="text-lg font-bold text-white">🤖 聊天机器人客户端</h3>
+                  <span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-[10px] font-mono rounded-full border border-emerald-500/30">2.2.7 NEW</span>
+                </div>
+                <p class="text-xs text-slate-400">将网页版对话机器人核心功能移植至桌面客户端，支持模型选择、Prompt 预设、多轮会话。</p>
+              </div>
+              <select v-model="chatbotModel" class="bg-slate-800 border border-slate-700 text-slate-200 rounded-xl px-3 py-1.5 text-xs font-medium outline-none">
+                <option v-for="m in chatbotModels" :key="m" :value="m">{{ m }}</option>
+              </select>
+            </div>
+
+            <!-- Prompt 快捷标签 -->
+            <div class="flex gap-2 mb-4">
+              <button 
+                v-for="tag in chatbotQuickPrompts" 
+                :key="tag" 
+                @click="chatbotInput = tag.slice(2) + '：'"
+                class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-[11px] text-slate-300 font-medium transition-all"
+              >{{ tag }}</button>
+            </div>
+
+            <!-- 消息列表 -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 mb-4 pr-2">
+              <div v-for="msg in chatbotMessages" :key="msg.id" :class="['flex', msg.role === 'user' ? 'justify-end' : 'justify-start']">
+                <div :class="['max-w-[80%] rounded-2xl px-4 py-3 text-xs leading-relaxed', msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-slate-800 border border-slate-700 text-slate-200']">
+                  <div v-if="msg.role === 'assistant'" class="text-[10px] text-slate-400 mb-1 font-mono">{{ msg.model }} · {{ msg.time }}</div>
+                  <div v-html="msg.content.replace(/\*\*(.*?)\*\*/g, '<strong class=&quot;text-white&quot;>$1</strong>')"></div>
+                  <div v-if="msg.role === 'user'" class="text-[10px] text-blue-200 mt-1 text-right font-mono">{{ msg.time }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 输入框 -->
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800">
+              <textarea 
+                v-model="chatbotInput" 
+                @keydown.enter.exact.prevent="sendChatbotMessage" 
+                rows="2" 
+                placeholder="输入消息... (Enter 发送)" 
+                class="w-full bg-transparent outline-none text-xs text-white resize-none"
+              ></textarea>
+              <div class="flex justify-between items-center pt-2 border-t border-slate-800/80">
+                <div class="flex items-center gap-3 text-[11px] text-slate-500">
+                  <span class="font-mono">模型: {{ chatbotModel }}</span>
+                  <span>·</span>
+                  <span class="font-mono">线路: {{ activeProfile.name }}</span>
+                </div>
+                <button @click="sendChatbotMessage" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold transition-all shadow-md shadow-blue-600/30">
+                  发送
+                </button>
               </div>
             </div>
           </div>

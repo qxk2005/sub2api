@@ -22,7 +22,7 @@ export const useDemoStore = defineStore('demo', () => {
   // ============ 套餐 Mock 数据 ============
   const plans = ref([
     { name: '入门版', price: 29, unit: '月', quota: '100万 Tokens', models: '基础模型', support: '社区支持', features: ['GPT-4o Mini', 'Gemini Flash', '基础 API 调用', '调用日志查询'] },
-    { name: '专业版', price: 199, unit: '月', quota: '1000万 Tokens', models: '全部模型', support: '工单优先', features: ['全部模型无限制', '语义缓存降本', '多 Key 管理', '账单导出'], recommended: true },
+    { name: '专业版', price: 199, unit: '月', quota: '1000万 Tokens', models: '全部模型', support: '工单优先', features: ['全部模型无限制', '安全敏感词护栏', '多 Key 管理', '账单导出'], recommended: true },
     { name: '企业版', price: '定制', unit: '', quota: '无限', models: '专属号池', support: '专属客服', features: ['专属号池隔离', '员工子账号管理', '多级分账', 'SLA 保障', '私有化部署'] },
   ])
 
@@ -71,8 +71,27 @@ export const useDemoStore = defineStore('demo', () => {
     inviteCode: 'EAST2026VIP',
     inviteLink: 'https://api.sub2api.com/r/EAST2026VIP',
     pools: [
-      { name: 'VIP 专属池-华东', models: ['gpt-4o', 'claude-3-5-sonnet'], keys: 8, status: '正常', qps: 120 },
-      { name: '经济池-通用', models: ['gpt-4o-mini', 'deepseek-v3'], keys: 15, status: '正常', qps: 300 },
+      { id: 'pool-vip', name: 'VIP 专属池-华东', models: ['gpt-4o', 'claude-3-5-sonnet'], keys: 8, status: '正常', qps: 120, wholesaleDiscount: 0.85 },
+      { id: 'pool-economy', name: '经济号池-通用', models: ['gpt-4o-mini', 'deepseek-v3'], keys: 15, status: '正常', qps: 300, wholesaleDiscount: 0.75 },
+      { id: 'pool-gpu', name: '高并发 GPU 算力池', models: ['claude-3-5-sonnet', 'gpt-4o'], keys: 12, status: '正常', qps: 200, wholesaleDiscount: 0.90 },
+    ],
+    baseModelCosts: [
+      { id: 'gpt-4o', name: 'GPT-4o', baseCost: 10.00, unit: '1M Tokens' },
+      { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', baseCost: 15.00, unit: '1M Tokens' },
+      { id: 'deepseek-v3', name: 'DeepSeek V3', baseCost: 2.00, unit: '1M Tokens' },
+      { id: 'gpt-4o-mini', name: 'GPT-4o Mini', baseCost: 1.50, unit: '1M Tokens' },
+    ],
+    pricingRules: [
+      // 直营个人用户规则
+      { id: 1, targetType: 'direct_user', targetName: '直营个人用户 (默认全局)', poolId: 'pool-vip', modelId: 'gpt-4o', markupType: 'ratio', markupValue: 25, enabled: true, note: '标准零售散户加价' },
+      { id: 2, targetType: 'direct_user', targetName: '直营个人用户 (默认全局)', poolId: 'pool-economy', modelId: 'gpt-4o-mini', markupType: 'fixed', markupValue: 0.30, enabled: true, note: '小模型固定额微利' },
+      { id: 3, targetType: 'direct_user', targetName: 'VIP 直营高级开发者', poolId: 'pool-gpu', modelId: 'claude-3-5-sonnet', markupType: 'ratio', markupValue: 18, enabled: true, note: '开发者专属优惠' },
+      
+      // 下级企业租户规则
+      { id: 4, targetType: 'sub_tenant', targetName: '示例科技有限公司 (企业)', poolId: 'pool-vip', modelId: 'gpt-4o', markupType: 'ratio', markupValue: 12, enabled: true, note: 'B端战略客户大额采购价' },
+      { id: 5, targetType: 'sub_tenant', targetName: '创新工坊 (企业)', poolId: 'pool-gpu', modelId: 'claude-3-5-sonnet', markupType: 'ratio', markupValue: 15, enabled: true, note: '算力池套餐加价' },
+      { id: 6, targetType: 'sub_tenant', targetName: '智慧教育科技 (企业)', poolId: 'pool-economy', modelId: 'deepseek-v3', markupType: 'fixed', markupValue: 0.20, enabled: true, note: '教育机构优惠' },
+      { id: 7, targetType: 'sub_tenant', targetName: '下级租户通用默认策略', poolId: 'pool-economy', modelId: 'gpt-4o-mini', markupType: 'ratio', markupValue: 10, enabled: true, note: '新挂载企业默认模板' },
     ],
     clients: [
       { name: '示例科技有限公司', type: '企业', monthly: 1289.50, tokens: 5600000, joined: '2026-03-15', status: '活跃' },
@@ -143,12 +162,8 @@ export const useDemoStore = defineStore('demo', () => {
     { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.4', name: '调用日志与明细查询', route: '/admin/usage', status: 'fulfilled', desc: '全链路调用日志记录与敏感数据脱敏', guide: '进入【日志/用量统计】页面，筛选查看所有请求的时间、请求/响应 Token 数量、响应时延及状态码。' },
     { chapter: '2.1', chapterName: '2.1 中转站中台', section: '2.1.5', name: '频率限制（Rate Limit）与熔断', route: '/admin/channels/monitor', status: 'fulfilled', desc: '自动限流与熔断，P95≤50ms', guide: '进入【渠道监控】页面查看实时 QPS。当某个渠道持续报 5xx 或响应超时时，自动触发熔断暂停分发。' },
 
-    // 2.5 核心网关能力
-    { chapter: '2.5', chapterName: '2.5 核心网关能力', section: '2.5.1', name: '最高性价比调度策略', route: '/admin/settings', status: 'pending', desc: '多维加权算分引擎选择最优渠道', guide: '在【系统设置 -> 实验调度策略】中开启“低倍率优先调度”与“成本权重算分”，智能路由引擎优先把请求分发给成本最省且健康的渠道/账号。' },
-    { chapter: '2.5', chapterName: '2.5 核心网关能力', section: '2.5.2', name: '渠道专属号池绑定与亲和路由', route: '/admin/groups', status: 'pending', desc: 'VIP 资源物理/逻辑隔离', guide: '进入【分组管理 (Groups)】，将特定号池/渠道绑定至 VIP 分组或渠道代理组，实现不同租户与代理间的资源物理/逻辑隔离。' },
-    { chapter: '2.5', chapterName: '2.5 核心网关能力', section: '2.5.3', name: '用户端无感切换', route: '/admin/channels/monitor', status: 'partial', desc: '故障自动降级切换备用渠道', guide: '在【渠道监控】中观察节点健康度。主渠道异常时网关会在后端自动重试其他备用渠道，对终端响应无报错。' },
-    { chapter: '2.5', chapterName: '2.5 核心网关能力', section: '2.5.4', name: '缓存降本策略（语义缓存）', route: '/admin/settings', status: 'pending', desc: '向量 Embedding 相似度>95%自动命中', guide: '进入【系统设置 -> 引擎/缓存策略】，勾选开启 Engine A 向量语义缓存，重复或近义提问直接缓存命中免扣费。' },
-    { chapter: '2.5', chapterName: '2.5 核心网关能力', section: '2.5.5', name: '失败重试与优先级队列', route: '/admin/channels/monitor', status: 'partial', desc: '加权公平队列与指数退避', guide: '在【系统设置 -> 路由参数】中配置指数退避重试次数。发生临时网络波动时优先放入快速重试队列。' },
+    // 2.5 核心网关能力（安全合规与敏感词护栏）
+    { chapter: '2.5', chapterName: '2.5 核心网关能力补全', section: '2.5.1', name: '安全敏感词护栏', route: '/demo/admin/sensitive-words', status: 'fulfilled', desc: '输入/输出双向实时敏感词拦截，对接网信办词库', guide: '进入【安全敏感词护栏】DEMO 页面，管理词库规则（支持热增加/删除），查看实时审计日志，配置双向拦截开关与 Webhook 通知。' },
 
     // 2.6 财务账单系统
     { chapter: '2.6', chapterName: '2.6 财务账单系统', section: '2.6.1', name: '用量计量（多级穿透分账）', route: '/admin/usage', status: 'partial', desc: '按 Prompt/Completion/Cached Tokens 精确扣费', guide: '在【用量统计】中可穿透查看用户、代理商与平台的原始输入/输出/缓存 Tokens 消费和金额扣减记录。' },
@@ -162,6 +177,10 @@ export const useDemoStore = defineStore('demo', () => {
     { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.1', name: '多租户架构', route: '/admin/groups', status: 'pending', desc: '四级分层架构与数据隔离', guide: '在【分组管理 (Groups)】中配置不同用户组/租户的独立共享配额、策略模板与专属渠道绑定。' },
     { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.2', name: '角色体系（RBAC）', route: '/admin/users', status: 'partial', desc: '四级分层 RBAC 权限矩阵', guide: '在【用户管理】列表中找到目标用户，点击操作栏的【修改角色】，可在系统管理员、代理商、租户管理员间切换。' },
     { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.3', name: '细粒度权限控制', route: '/admin/users', status: 'pending', desc: '模块级、功能级、数据级权限', guide: '在【用户编辑】弹窗中针对特定的模型列表进行勾选授权，限制用户仅能访问指定 AI 模型。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.4', name: '组织 Key 管理', route: '/keys', status: 'partial', desc: '企业租户管理员统一管理组织级 API Key', guide: '进入【API 密钥】页面，以企业管理员身份批量生成和分发组织级 API Key。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.5', name: '登录安全与角色强制2FA', route: '/admin/settings', status: 'pending', desc: '关键角色强制双因素认证', guide: '在【系统设置 -> 安全策略】中为管理员与代理商角色启用强制 2FA 绑定策略。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.6', name: '子账号批量开户', route: '/admin/users', status: 'pending', desc: '企业管理员批量为员工创建子账号与配额', guide: '在【用户管理 -> 批量开户】上传 CSV 模板一键批量创建子账号。' },
+    { chapter: '2.7', chapterName: '2.7 账号体系与权限管理', section: '2.7.7', name: '租户/用户专属门户', route: '/demo/tenant/user-portal', status: 'pending', desc: '租户管理员门户与员工个人门户分层展示', guide: '进入【企业租户控制台 -> 我的专属门户】，以员工/普通用户身份查看个人 Key、用量、可用模型。' },
 
     // 2.8 上游号池与渠道管理
     { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.1', name: '渠道接入管理', route: '/admin/channels/pricing', status: 'fulfilled', desc: '新增/编辑/停用上游渠道', guide: '进入【渠道管理】，点击右上角【创建渠道】，填写渠道名称、Base URL 与 API Key 建立连接。' },

@@ -65,9 +65,9 @@
             <div class="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition-transform">
               ⚡️
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">高并发智能调度</h3>
+            <h3 class="text-xl font-bold text-slate-900 mb-3">安全合规与内容护栏</h3>
             <p class="text-slate-600 leading-relaxed text-sm">
-              底层 Engine A 提供 500+ QPS 高并发承载能力，结合性价比调度与故障自动熔断降级，保障 99.9% 高可用 SLA。
+              内置安全敏感词双向拦截护栏，对接网信办标准词库，输入输出实时过滤，500+ QPS 高并发下合规拦截率 99.97%。
             </p>
           </div>
           <!-- 痛点 3 -->

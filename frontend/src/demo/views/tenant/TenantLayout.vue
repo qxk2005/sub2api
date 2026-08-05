@@ -106,6 +106,19 @@ const demoStore = useDemoStore()
             <span class="text-base">⚙️</span>
             <span>企业参数设置</span>
           </router-link>
+
+          <div class="pt-4 pb-1">
+            <p class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">用户门户 <span class="text-violet-500">2.7.7</span></p>
+          </div>
+
+          <router-link 
+            to="/demo/tenant/user-portal" 
+            class="flex items-center space-x-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-slate-100 dark:hover:bg-dark-700 hover:text-slate-900" 
+            active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
+          >
+            <span class="text-base">👤</span>
+            <span>我的专属门户</span>
+          </router-link>
         </nav>
 
         <!-- 底部用户信息 -->

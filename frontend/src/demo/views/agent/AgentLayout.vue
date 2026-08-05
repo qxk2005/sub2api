@@ -92,7 +92,7 @@ const demoStore = useDemoStore()
             active-class="bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-sm font-bold"
           >
             <span class="text-base">💳</span>
-            <span>佣金与结算提现</span>
+            <span>结算与双向对账</span>
           </router-link>
 
           <div class="pt-4 pb-1">

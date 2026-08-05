@@ -33,6 +33,7 @@ const demoRoutes: RouteRecordRaw[] = [
       { path: 'billing', name: 'DemoTenantBilling', component: () => import('./views/tenant/TenantBilling.vue'), meta: { title: '财务与账单 - 企业租户' } },
       { path: 'security', name: 'DemoTenantSecurity', component: () => import('./views/tenant/TenantSecurity.vue'), meta: { title: '安全设置 - 企业租户' } },
       { path: 'settings', name: 'DemoTenantSettings', component: () => import('./views/tenant/TenantSettings.vue'), meta: { title: '系统设置 - 企业租户' } },
+      { path: 'user-portal', name: 'DemoTenantUserPortal', component: () => import('./views/tenant/TenantUserPortal.vue'), meta: { title: '用户专属门户 - 企业租户' } },
     ]
   },
 
@@ -48,7 +49,7 @@ const demoRoutes: RouteRecordRaw[] = [
       { path: 'direct-users', name: 'DemoAgentDirectUsers', component: () => import('./views/agent/AgentDirectUsers.vue'), meta: { title: '直营用户管理 - 渠道代理' } },
       { path: 'pricing', name: 'DemoAgentPricing', component: () => import('./views/agent/AgentPricing.vue'), meta: { title: '专属费率 - 渠道代理' } },
       { path: 'pools', name: 'DemoAgentPools', component: () => import('./views/agent/AgentPools.vue'), meta: { title: '专属号池 - 渠道代理' } },
-      { path: 'payouts', name: 'DemoAgentPayouts', component: () => import('./views/agent/AgentPayouts.vue'), meta: { title: '佣金提现 - 渠道代理' } },
+      { path: 'payouts', name: 'DemoAgentPayouts', component: () => import('./views/agent/AgentPayouts.vue'), meta: { title: '结算与对账 - 渠道代理' } },
     ]
   },
 
@@ -58,6 +59,14 @@ const demoRoutes: RouteRecordRaw[] = [
     name: 'DemoDesktopClient',
     component: () => import('./views/desktop/DesktopClient.vue'),
     meta: { requiresAuth: false, title: 'Sub2API 桌面客户端' }
+  },
+
+  // ==================== 平台管理员 DEMO 页面 (2.5) ====================
+  {
+    path: '/demo/admin/sensitive-words',
+    name: 'DemoAdminSensitiveWords',
+    component: () => import('./views/admin/AdminSensitiveWords.vue'),
+    meta: { requiresAuth: false, title: '安全敏感词护栏 - 平台管理' }
   },
 ]
 

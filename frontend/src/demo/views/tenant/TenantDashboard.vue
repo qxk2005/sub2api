@@ -16,7 +16,7 @@ const demoStore = useDemoStore()
         <span>🏢 2.7 企业租户控制台总览</span>
       </div>
       <h1 class="text-2xl font-black text-slate-900 dark:text-white">企业 API 资源控制大盘</h1>
-      <p class="text-xs text-slate-500 dark:text-slate-400">实时掌控全公司的 API Token 消费总量、员工子账号配额使用率及底层语义缓存优化比率。</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400">实时掌控全公司的 API Token 消费总量、员工子账号配额使用率及安全合规护栏拦截状态。</p>
     </div>
 
     <!-- 核心数据卡片 (苹果灰白风) -->
@@ -66,14 +66,14 @@ const demoStore = useDemoStore()
         <div class="text-[11px] text-slate-500 font-bold">部署 {{ demoStore.tenant.keyCount }} 个 Key 秘钥</div>
       </div>
 
-      <!-- 缓存命中率 -->
+      <!-- 安全合规护栏 -->
       <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 border border-slate-200/80 dark:border-dark-700 shadow-sm space-y-3">
         <div class="flex justify-between items-center text-xs font-bold text-slate-400">
-          <span>Engine A 语义缓存</span>
-          <span class="p-1.5 bg-amber-50 text-amber-600 rounded-xl text-sm">✨</span>
+          <span>安全敏感词护栏</span>
+          <span class="p-1.5 bg-red-50 text-red-600 rounded-xl text-sm">🛡️</span>
         </div>
-        <div class="text-3xl font-black text-amber-600 font-mono">18.4%</div>
-        <div class="text-[11px] text-slate-500 font-bold">本月直接节省成本 ¥284.50</div>
+        <div class="text-3xl font-black text-emerald-600 font-mono">99.97%</div>
+        <div class="text-[11px] text-slate-500 font-bold">本月拦截违规请求 127 次，合规通过率 99.97%</div>
       </div>
     </div>
 

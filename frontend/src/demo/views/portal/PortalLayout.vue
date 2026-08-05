@@ -175,7 +175,7 @@ const toggleAuth = () => {
         <div>
           <h4 class="font-semibold text-slate-900 dark:text-white mb-4 text-xs">核心引擎</h4>
           <ul class="space-y-2 text-xs text-slate-500">
-            <li>Engine A: 向量语义缓存</li>
+            <li>安全敏感词合规护栏</li>
             <li>Engine B: 多级穿透扣费与实时分账</li>
             <li>智能熔断与多渠道 Failover</li>
           </ul>
