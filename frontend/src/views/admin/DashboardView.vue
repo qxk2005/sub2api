@@ -1,18 +1,21 @@
 <template>
   <AppLayout>
     <div class="space-y-6">
-      <!-- Return to Home / Demo Center Bar -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 border border-blue-200/80 dark:border-blue-900/50 p-4 rounded-2xl shadow-sm gap-3">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
-            🏠
+      <!-- Return to Home / Demo Center Bar (SiliconFlow 冰晶紫白 SaaS 风) -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between bg-gradient-to-r from-purple-50 via-violet-50/60 to-purple-100/50 dark:from-purple-950/40 dark:via-purple-900/30 dark:to-slate-900 border border-purple-200/80 dark:border-purple-800/50 p-4.5 rounded-2xl shadow-sm gap-3 relative overflow-hidden">
+        <div class="flex items-center gap-3.5 relative z-10">
+          <div class="w-10 h-10 rounded-xl bg-[#6e29f6] text-white flex items-center justify-center font-black text-lg shadow-md shadow-purple-500/25">
+            👑
           </div>
           <div>
-            <h3 class="font-bold text-gray-900 dark:text-white text-sm">Sub2API 控制台演示环境</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">您正在体验系统管理员控制台。可随时点击右侧按钮返回控制台首页重新选择不同角色或门户入口。</p>
+            <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+              <span>Sub2API 平台中央控制塔 (Level 1 Central Control)</span>
+              <span class="px-2 py-0.2 bg-purple-100 dark:bg-purple-950 text-[#6e29f6] dark:text-purple-300 text-[10px] rounded-full font-mono font-bold border border-purple-200 dark:border-purple-800/40">SiliconFlow 配色</span>
+            </h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">您正在体验系统管理员控制台。可随时点击右侧按钮返回控制台首页重新选择不同角色或门户入口。</p>
           </div>
         </div>
-        <router-link to="/home" class="self-start sm:self-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-blue-500/10 transition-all flex items-center gap-1.5 whitespace-nowrap">
+        <router-link to="/home" class="relative z-10 self-start sm:self-auto px-4 py-2 bg-[#6e29f6] hover:bg-[#581cd6] text-white rounded-xl text-xs font-bold shadow-md shadow-purple-500/25 transition-all flex items-center gap-1.5 whitespace-nowrap">
           <span>← 返回控制台首页 / 演示中心</span>
         </router-link>
       </div>
@@ -26,10 +29,10 @@
         <!-- Row 1: Core Stats -->
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <!-- Total API Keys -->
-          <div class="card p-4">
+          <div class="card p-4 hover:border-purple-500/50 transition-all">
             <div class="flex items-center gap-3">
-              <div class="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                <Icon name="key" size="md" class="text-blue-600 dark:text-blue-400" :stroke-width="2" />
+              <div class="rounded-xl bg-purple-100 p-2.5 dark:bg-purple-950/60 border border-purple-200/50 dark:border-purple-800/40">
+                <Icon name="key" size="md" class="text-purple-600 dark:text-purple-300" :stroke-width="2" />
               </div>
               <div>
                 <p class="text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -38,7 +41,7 @@
                 <p class="text-xl font-bold text-gray-900 dark:text-white">
                   {{ stats.total_api_keys }}
                 </p>
-                <p class="text-xs text-green-600 dark:text-green-400">
+                <p class="text-xs text-purple-600 dark:text-purple-400 font-semibold">
                   {{ stats.active_api_keys }} {{ t('common.active') }}
                 </p>
               </div>
@@ -261,21 +264,21 @@
             </button>
             <button
               type="button"
-              class="group flex items-center gap-3 rounded-lg bg-gray-50 p-3 text-left transition-colors hover:bg-emerald-50 dark:bg-dark-800/50 dark:hover:bg-emerald-900/20"
+              class="group flex items-center gap-3 rounded-xl bg-slate-50 p-3.5 text-left transition-all border border-slate-100 hover:border-purple-200 hover:bg-purple-50/50 dark:bg-slate-900/50 dark:hover:bg-purple-950/30 dark:border-slate-800"
               @click="router.push('/admin/groups')"
             >
-              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+              <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-purple-100 text-[#6e29f6] dark:bg-purple-950/60 dark:text-purple-300 font-bold border border-purple-200/50">
                 <Icon name="grid" size="md" :stroke-width="2" />
               </span>
               <span class="min-w-0 flex-1">
-                <span class="block text-sm font-medium text-gray-900 dark:text-white">
+                <span class="block text-sm font-bold text-slate-900 dark:text-white group-hover:text-[#6e29f6] transition-colors">
                   {{ t('admin.dashboard.groupPricing') }}
                 </span>
-                <span class="block text-xs text-gray-500 dark:text-gray-400">
+                <span class="block text-xs text-slate-500 dark:text-slate-400">
                   {{ t('admin.dashboard.groupPricingDesc') }}
                 </span>
               </span>
-              <Icon name="chevronRight" size="sm" class="text-gray-400 group-hover:text-emerald-500" />
+              <Icon name="chevronRight" size="sm" class="text-slate-400 group-hover:text-[#6e29f6]" />
             </button>
           </div>
         </div>

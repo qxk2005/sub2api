@@ -1,229 +1,342 @@
 <script setup lang="ts">
 /**
- * FRS V3.0 2.4.2 模型广场 (支持的模型列表、能力说明与封面展示)
- * 具备精致 3D / AI Cover 封面展示、多品牌筛选与零代码接入指导
+ * FRS V3.0 2.4.2 模型广场 (完全 1:1 精准对标硅基流动官方 https://siliconflow.cn/models 真实设计)
+ * 采用清爽冰晶紫白渐变背景、Hero 大胶囊搜索框、多维模型类型/应用场景 Pills 标签及精美纯白模型卡片
  */
 import { ref, computed } from 'vue'
 import { useDemoStore } from '../../stores/useDemoStore'
 
 const demoStore = useDemoStore()
 
-// 搜索与筛选
+// 筛选状态
 const searchQuery = ref('')
-const selectedProvider = ref('all')
+const selectedType = ref('all') // 'all' | 'chat' | 'code' | 'embed' | 'image' | 'audio'
+const selectedScenario = ref('all') // 'all' | 'rag' | 'vibe' | 'translation' | 'summary'
+const selectedProvider = ref('all') // 'all' | 'DeepSeek' | 'Qwen' | 'Meta' | 'OpenAI' | 'Anthropic' | 'Google' | 'BAAI'
+const sortBy = ref<'default' | 'price' | 'date'>('default')
 
-// 实时过滤模型列表
+// 热门搜索关键词
+const hotKeywords = ['DeepSeek-R1-Pro', 'Qwen2.5-72B-Instruct', 'GLM-5.2', 'Kimi-K2.7-Code', 'MiniMax-M2.5']
+
+// 拷贝提示
+const copiedModelId = ref<string | null>(null)
+const copyModelId = (id: string) => {
+  copiedModelId.value = id
+  navigator.clipboard?.writeText(id)
+  setTimeout(() => copiedModelId.value = null, 2000)
+}
+
+// 过滤后的模型
 const filteredModels = computed(() => {
-  return demoStore.models.filter(m => {
-    const matchSearch = m.name.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-                        m.id.toLowerCase().includes(searchQuery.value.toLowerCase())
-    const matchProvider = selectedProvider.value === 'all' || m.provider === selectedProvider.value
-    return matchSearch && matchProvider
+  let list = demoStore.models.filter(m => {
+    const q = searchQuery.value.toLowerCase().trim()
+    const matchQ = !q || m.name.toLowerCase().includes(q) || m.id.toLowerCase().includes(q) || m.provider.toLowerCase().includes(q)
+    const matchCat = selectedType.value === 'all' || 
+                     (selectedType.value === 'chat' && m.category === 'LLM') ||
+                     (selectedType.value === 'code' && m.capability.some(c => c.includes('代码'))) ||
+                     (selectedType.value === 'embed' && m.category === 'Embedding') ||
+                     (selectedType.value === 'image' && m.category === 'Image')
+    const matchProv = selectedProvider.value === 'all' || m.provider === selectedProvider.value
+    return matchQ && matchCat && matchProv
   })
+
+  if (sortBy.value === 'price') {
+    list.sort((a, b) => a.price.input - b.price.input)
+  }
+  return list
 })
 
-// 按供应商分组
-const modelsByProvider = computed(() => {
-  const map: Record<string, typeof demoStore.models> = {}
-  filteredModels.value.forEach(m => {
-    if (!map[m.provider]) map[m.provider] = []
-    map[m.provider].push(m)
-  })
-  return map
-})
-
-// 代码接入 Modal
+// Modal Playground 弹窗
 const isModalOpen = ref(false)
 const targetModel = ref<any>(null)
+const activeLanguage = ref<'python' | 'curl' | 'nodejs'>('python')
+const copyCodeNotice = ref(false)
 
 const openAccessModal = (m: any) => {
   targetModel.value = m
   isModalOpen.value = true
 }
 
-const copySuccessNotice = ref(false)
-const copySnippet = () => {
-  copySuccessNotice.value = true
-  setTimeout(() => copySuccessNotice.value = false, 2500)
+const copyCodeSnippet = () => {
+  copyCodeNotice.value = true
+  setTimeout(() => copyCodeNotice.value = false, 2000)
 }
 </script>
 
 <template>
-  <div class="portal-models pt-10 pb-24 bg-slate-50 dark:bg-dark-900 min-h-screen text-slate-900 dark:text-slate-100 font-sans selection:bg-blue-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
-      
-      <!-- 1. 头部 Banner 与价值主张 (已彻底清除“透明公开资费”字样) -->
-      <div class="text-center space-y-3 max-w-3xl mx-auto">
-        <div class="inline-flex items-center space-x-2 bg-blue-100/80 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-3.5 py-1 rounded-full text-xs font-bold border border-blue-200/80 dark:border-blue-900/60 shadow-2xs">
-          <span>✨ 2.4.2 全球 AI 模型广场</span>
-        </div>
-        <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-          聚合全球顶尖 AI 大模型 <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">全系统一接入</span>
+  <div class="portal-models min-h-screen bg-gradient-to-b from-[#f3effe] via-[#f8f7ff] to-white dark:from-[#0d091e] dark:via-[#0c0f1d] dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-purple-200">
+    
+    <!-- 1. 硅基流动 SiliconFlow 标志性 Header Hero 区域 (清爽紫白，无强黑) -->
+    <div class="relative pt-12 pb-16 overflow-hidden">
+      <!-- 柔和紫色背景 Floating Orbs 悬浮流光球 -->
+      <div class="absolute top-10 left-1/4 w-72 h-72 bg-purple-300/30 dark:bg-purple-900/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute top-20 right-1/4 w-80 h-80 bg-violet-200/40 dark:bg-violet-950/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-5xl mx-auto px-4 text-center space-y-6 relative z-10">
+        
+        <!-- 大标题 -->
+        <h1 class="text-4xl md:text-6xl font-black text-[#5622d6] dark:text-purple-300 tracking-tight">
+          你要的 AI 模型，这里都有
         </h1>
-        <p class="text-sm md:text-base text-slate-500 dark:text-slate-400">
-          一站式接入 OpenAI、Claude、Gemini、DeepSeek、Grok 全系大模型。统一 API 协议，开箱即用。
+        
+        <!-- 副标题 -->
+        <p class="text-base md:text-lg text-slate-600 dark:text-slate-300 font-medium">
+          1 个 API，3 行代码，100+ 主流模型轻松调用
         </p>
-      </div>
 
-      <!-- 2. 搜索框与品牌筛选 Tab 栏 (苹果灰白卡片风格) -->
-      <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 bg-white dark:bg-dark-800 p-4 rounded-3xl border border-slate-200/80 dark:border-dark-700 shadow-sm">
-        
-        <!-- 品牌筛选 Tab -->
-        <div class="flex items-center gap-1.5 overflow-x-auto text-xs pb-1 md:pb-0">
-          <button 
-            v-for="p in ['all', 'OpenAI', 'Anthropic', 'Google', 'DeepSeek', 'xAI']" 
-            :key="p"
-            @click="selectedProvider = p"
-            :class="['px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all', selectedProvider === p ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 dark:bg-dark-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200/80']"
-          >
-            {{ p === 'all' ? '全部品牌' : p }}
-          </button>
-        </div>
+        <!-- 大胶囊形搜索框 (SiliconFlow Pill Search Bar) -->
+        <div class="max-w-2xl mx-auto pt-2">
+          <div class="relative flex items-center bg-white dark:bg-slate-900 rounded-full p-2 shadow-xl shadow-purple-500/10 border border-purple-200/80 dark:border-purple-800/60 focus-within:border-[#6e29f6] focus-within:ring-4 focus-within:ring-purple-500/15 transition-all">
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              placeholder="具备超强上下文、代码能力的模型..." 
+              class="w-full pl-6 pr-24 py-2.5 bg-transparent text-sm outline-none text-slate-800 dark:text-slate-100 placeholder-slate-400 font-medium"
+              @keyup.enter="searchQuery = searchQuery"
+            />
+            <button 
+              @click="searchQuery = searchQuery"
+              class="absolute right-2 px-6 py-2.5 bg-[#6e29f6] hover:bg-[#581cd6] text-white rounded-full text-xs font-bold transition-all shadow-md shadow-purple-500/30 flex items-center gap-1.5"
+            >
+              <span>✨ 搜索</span>
+            </button>
+          </div>
 
-        <!-- 搜索输入框 -->
-        <div class="relative min-w-[260px]">
-          <input 
-            v-model="searchQuery"
-            type="text" 
-            placeholder="搜索模型名称或 ID (如 gpt-4o)..." 
-            class="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-2xl text-xs outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all"
-          />
-          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-        </div>
-      </div>
-
-      <!-- 3. 按供应商分组展示模型卡片 Grid (包含高质感 Cover 封面图片) -->
-      <div v-for="(modelsList, provider) in modelsByProvider" :key="provider" class="space-y-4">
-        <div class="flex items-center space-x-3 border-b border-slate-200/80 dark:border-dark-700 pb-2">
-          <h2 class="text-xl font-bold text-slate-900 dark:text-white">{{ provider }} 专区</h2>
-          <span class="px-2.5 py-0.5 bg-slate-200 dark:bg-dark-700 text-slate-600 dark:text-slate-300 rounded-lg text-xs font-mono font-bold">{{ modelsList.length }} 款可用模型</span>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div 
-            v-for="model in modelsList" 
-            :key="model.id" 
-            class="bg-white dark:bg-dark-800 rounded-3xl border border-slate-200/80 dark:border-dark-700 shadow-sm hover:shadow-xl transition-all duration-300 relative group flex flex-col justify-between overflow-hidden"
-          >
-            <!-- 顶部模型 Cover 封面图片 -->
-            <div class="h-36 w-full overflow-hidden relative bg-slate-900">
-              <img 
-                :src="model.cover" 
-                :alt="model.name"
-                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-90 group-hover:opacity-100" 
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent"></div>
-              
-              <!-- 推荐角标 -->
-              <div v-if="model.badge" class="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md z-10">
-                {{ model.badge }}
-              </div>
-
-              <!-- Cover 上挂载的模型名称 -->
-              <div class="absolute bottom-3 left-4 text-white">
-                <h3 class="text-lg font-black tracking-tight drop-shadow-md">{{ model.name }}</h3>
-                <code class="text-[11px] text-blue-200 font-mono opacity-90 block">{{ model.id }}</code>
-              </div>
-            </div>
-
-            <!-- 卡片下半部分内容 -->
-            <div class="p-5 space-y-4 flex-1 flex flex-col justify-between">
-              
-              <!-- 上下文上限与能力标签 -->
-              <div class="space-y-3">
-                <div class="flex justify-between items-center text-xs">
-                  <span class="text-slate-400 font-mono text-[10px]">上下文长度</span>
-                  <span class="bg-slate-100 dark:bg-dark-900 px-2.5 py-0.5 rounded-lg text-[10px] font-mono text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-dark-700 font-bold">
-                    {{ model.context }}
-                  </span>
-                </div>
-
-                <div class="flex flex-wrap gap-1.5">
-                  <span v-for="cap in model.capability" :key="cap" class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold border border-blue-100 dark:border-blue-900/60">
-                    {{ cap }}
-                  </span>
-                </div>
-              </div>
-
-              <!-- 价格资费区 -->
-              <div class="border-t border-slate-100 dark:border-dark-700 pt-3 space-y-3">
-                <div class="grid grid-cols-2 gap-2 bg-slate-50 dark:bg-dark-900 p-3 rounded-2xl text-xs font-mono border border-slate-200/60 dark:border-dark-700">
-                  <div>
-                    <div class="text-[10px] text-slate-400">输入 (Input)</div>
-                    <div class="text-slate-900 dark:text-white font-bold">
-                      ¥{{ model.price.input.toFixed(2) }} <span class="text-[9px] text-slate-400 font-normal">/1M</span>
-                    </div>
-                  </div>
-                  <div>
-                    <div class="text-[10px] text-slate-400">输出 (Output)</div>
-                    <div class="text-slate-900 dark:text-white font-bold">
-                      {{ model.price.output > 0 ? `¥${model.price.output.toFixed(2)} /1M` : '免费' }}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 快速接入按钮 -->
-                <button 
-                  @click="openAccessModal(model)"
-                  class="w-full py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-blue-600 dark:hover:bg-blue-400 rounded-2xl text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1"
-                >
-                  <span>⚡ 快速接入此模型</span>
-                </button>
-              </div>
-
-            </div>
-
+          <!-- 热门模型 Pills 推荐 -->
+          <div class="flex items-center justify-center gap-2 mt-4 flex-wrap text-xs">
+            <span class="text-slate-400 font-semibold text-[11px]">热门模型:</span>
+            <button 
+              v-for="kw in hotKeywords" 
+              :key="kw"
+              @click="searchQuery = kw"
+              class="px-3 py-1 bg-white/80 dark:bg-slate-900/80 hover:bg-purple-50 dark:hover:bg-purple-950/60 text-slate-600 dark:text-slate-300 rounded-full border border-purple-100 dark:border-purple-900/40 transition-all font-mono text-[11px] hover:border-purple-300"
+            >
+              {{ kw }}
+            </button>
           </div>
         </div>
+
+      </div>
+    </div>
+
+    <!-- 2. 多维分类与应用场景 Pills 筛选区 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-6">
+      
+      <div class="bg-white/80 dark:bg-slate-900/80 rounded-3xl p-6 border border-purple-100/80 dark:border-purple-900/40 shadow-sm backdrop-blur-xl space-y-4">
+        
+        <!-- 行一：模型类型 (LLM / 对话 / 扩展 / 代码 / 图像 / 音频) -->
+        <div class="flex items-center gap-3 flex-wrap text-xs">
+          <span class="text-slate-400 font-mono text-[11px] w-16">模型类型:</span>
+          <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+            <button 
+              v-for="t in [
+                { id: 'all', label: '全部' },
+                { id: 'chat', label: '对话' },
+                { id: 'code', label: '代码' },
+                { id: 'embed', label: '向量' },
+                { id: 'image', label: '生图' },
+                { id: 'audio', label: '音频' }
+              ]"
+              :key="t.id"
+              @click="selectedType = t.id"
+              :class="[
+                'px-4 py-1.5 rounded-xl font-bold transition-all border text-xs',
+                selectedType === t.id 
+                  ? 'bg-purple-50 dark:bg-purple-950/80 text-[#6e29f6] dark:text-purple-300 border-[#6e29f6] shadow-xs' 
+                  : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800 hover:bg-purple-50/50'
+              ]"
+            >
+              {{ t.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 行二：应用场景 (RAG / 代码工程 / 文案写作 / 长文摘要 / 语音合成) -->
+        <div class="flex items-center gap-3 flex-wrap text-xs border-t border-slate-100 dark:border-slate-800/80 pt-4">
+          <span class="text-slate-400 font-mono text-[11px] w-16">应用场景:</span>
+          <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar pb-1">
+            <button 
+              v-for="s in [
+                { id: 'all', label: '全部' },
+                { id: 'rag', label: 'RAG 知识库' },
+                { id: 'vibe', label: 'Vibe Coding 代码' },
+                { id: 'summary', label: '长文摘要 / 润色' },
+                { id: 'translation', label: '多语言翻译' }
+              ]"
+              :key="s.id"
+              @click="selectedScenario = s.id"
+              :class="[
+                'px-3.5 py-1.5 rounded-xl font-medium transition-all border text-xs',
+                selectedScenario === s.id 
+                  ? 'bg-purple-50 dark:bg-purple-950/80 text-[#6e29f6] dark:text-purple-300 border-[#6e29f6]' 
+                  : 'bg-slate-50 dark:bg-slate-950 text-slate-600 dark:text-slate-400 border-slate-200/60 dark:border-slate-800'
+              ]"
+            >
+              {{ s.label }}
+            </button>
+          </div>
+        </div>
+
+        <!-- 行三：厂商筛选 + 排序 -->
+        <div class="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 border-t border-slate-100 dark:border-slate-800/80 pt-4 text-xs">
+          <div class="flex items-center gap-2 overflow-x-auto custom-scrollbar">
+            <span class="text-slate-400 font-mono text-[11px] w-16">厂商品牌:</span>
+            <button 
+              v-for="p in ['all', 'DeepSeek', 'Qwen', 'Meta', 'OpenAI', 'Anthropic', 'Google', 'BFL', 'BAAI']" 
+              :key="p"
+              @click="selectedProvider = p"
+              :class="[
+                'px-3 py-1 rounded-lg font-bold transition-all border text-[11px]',
+                selectedProvider === p 
+                  ? 'bg-[#6e29f6] text-white border-transparent shadow-xs' 
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-transparent hover:bg-purple-50 hover:text-purple-600'
+              ]"
+            >
+              {{ p === 'all' ? '全部厂商' : p }}
+            </button>
+          </div>
+
+          <div class="flex items-center space-x-2 text-[11px] text-slate-500">
+            <span>排序:</span>
+            <select v-model="sortBy" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700 outline-none">
+              <option value="default">默认推荐</option>
+              <option value="price">按价格由低到高</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3. SiliconFlow 标志性纯白模型卡片 Grid (Model Cards Matrix) -->
+      <div class="flex justify-between items-center px-1">
+        <h2 class="text-xl font-black text-slate-900 dark:text-white">发现并使用最适合你的 AI 模型</h2>
+        <span class="text-xs text-slate-500 font-mono">共检索出 <strong>{{ filteredModels.length }}</strong> 款模型</span>
+      </div>
+
+      <div v-if="filteredModels.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        
+        <!-- 单个 Model Card (完全参考 SiliconFlow 纯白小卡片设计) -->
+        <div 
+          v-for="model in filteredModels" 
+          :key="model.id" 
+          @click="openAccessModal(model)"
+          class="bg-white dark:bg-slate-900/90 rounded-2xl p-5 border border-purple-100/90 dark:border-purple-900/30 shadow-sm hover:shadow-xl hover:shadow-purple-500/10 hover:border-purple-300 dark:hover:border-purple-500/60 transition-all duration-300 flex flex-col justify-between cursor-pointer group"
+        >
+          <div>
+            <!-- 卡片头栏：厂商 Icon + 右侧「托管」/「免费」Tag -->
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2">
+                <span class="w-7 h-7 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-[#6e29f6] dark:text-purple-300 font-black flex items-center justify-center text-[11px] border border-purple-200/50">
+                  {{ model.provider.substring(0, 2).toUpperCase() }}
+                </span>
+                <span class="text-xs font-bold text-slate-400 font-mono">{{ model.provider.toLowerCase() }}</span>
+              </div>
+              <span class="px-2 py-0.5 bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-300 rounded-md text-[10px] font-bold border border-sky-200/60 dark:border-sky-800/40">
+                {{ model.isFree ? '免费' : '托管' }}
+              </span>
+            </div>
+
+            <!-- 模型 ID (含一键复制) -->
+            <div class="flex items-center justify-between mt-1 mb-3">
+              <h3 class="text-sm font-bold text-slate-900 dark:text-white tracking-tight group-hover:text-[#6e29f6] transition-colors truncate max-w-[200px]" :title="model.id">
+                {{ model.id }}
+              </h3>
+              <button 
+                @click.stop="copyModelId(model.id)" 
+                class="text-slate-400 hover:text-[#6e29f6] p-1 text-xs transition-colors"
+                :title="copiedModelId === model.id ? '已复制！' : '复制 Model ID'"
+              >
+                {{ copiedModelId === model.id ? '✓ 已复制' : '📋' }}
+              </button>
+            </div>
+
+            <!-- 发布时间 -->
+            <div class="text-[10px] text-slate-400 font-mono mt-1 mb-3">
+              发布时间: {{ model.releaseDate || '2026年03月' }}
+            </div>
+
+            <!-- 能力气泡 Pills (如 Vibe Coding, 深度推理) -->
+            <div class="flex flex-wrap gap-1.5 mb-4">
+              <span v-for="cap in model.capability" :key="cap" class="px-2 py-0.5 bg-purple-50 dark:bg-purple-950/50 text-[#6e29f6] dark:text-purple-300 rounded-md text-[10px] font-bold">
+                {{ cap }}
+              </span>
+            </div>
+          </div>
+
+          <!-- 卡片底栏：单价 -->
+          <div class="border-t border-slate-100 dark:border-slate-800/80 pt-3 flex items-center justify-between text-[11px] font-mono">
+            <div class="text-slate-500">
+              输入: <strong class="text-slate-900 dark:text-white">{{ model.isFree ? '免费' : `¥${model.price.input.toFixed(2)}` }}</strong> <span class="text-[9px] font-normal text-slate-400">/ M Tokens</span>
+            </div>
+            <div class="text-slate-500">
+              输出: <strong class="text-slate-900 dark:text-white">{{ model.isFree ? '免费' : `¥${model.price.output.toFixed(2)}` }}</strong> <span class="text-[9px] font-normal text-slate-400">/ M Tokens</span>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
     </div>
 
-    <!-- 代码接入 Modal (2.4.3 零代码集成与示例) -->
+    <!-- Playground Modal 弹窗 (零代码集成) -->
     <div v-if="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-fade-in">
-      <div class="bg-white dark:bg-dark-800 rounded-3xl p-6 md:p-8 max-w-lg w-full border border-slate-200 dark:border-dark-700 shadow-2xl space-y-5">
-        <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-dark-700">
-          <h3 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <span>⚡ 接入模型：{{ targetModel?.name }}</span>
-          </h3>
+      <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 max-w-xl w-full border border-purple-200 dark:border-purple-900/50 shadow-2xl space-y-5">
+        
+        <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-800">
+          <div class="flex items-center space-x-2">
+            <span class="w-3 h-3 rounded-full bg-[#6e29f6]"></span>
+            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">
+              ⚡ 快速接入模型：{{ targetModel?.id }}
+            </h3>
+          </div>
           <button @click="isModalOpen = false" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
         </div>
 
-        <div class="space-y-3 text-xs">
-          <div class="p-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 rounded-2xl text-blue-700 dark:text-blue-300">
-            💡 提示：Sub2API 完全兼容 OpenAI 标准 API 格式。修改 Base URL 与 API Key 即可零成本接入。
+        <div class="space-y-4 text-xs">
+          <div class="p-3.5 bg-purple-50 dark:bg-purple-950/60 border border-purple-200/80 dark:border-purple-800/50 rounded-2xl text-[#6e29f6] dark:text-purple-300 leading-relaxed font-medium">
+            💡 Sub2API 完全兼容 OpenAI 标准协议。修改 Base URL 为中转地址即可 3 行代码无缝接入。
+          </div>
+
+          <div class="flex space-x-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+            <button 
+              v-for="lang in ['python', 'curl', 'nodejs']" 
+              :key="lang"
+              @click="activeLanguage = lang as any"
+              :class="[
+                'px-3.5 py-1 rounded-lg font-mono font-bold uppercase transition-all',
+                activeLanguage === lang ? 'bg-[#6e29f6] text-white shadow-xs' : 'bg-slate-100 dark:bg-slate-800 text-slate-500'
+              ]"
+            >
+              {{ lang }}
+            </button>
           </div>
 
           <div class="space-y-1 font-mono">
-            <div class="text-slate-500">统一请求 Base URL:</div>
-            <div class="p-2.5 bg-slate-900 text-slate-200 rounded-xl text-xs font-bold">
-              https://core.cnfcloud.com/v1
-            </div>
-          </div>
-
-          <div class="space-y-1 font-mono">
-            <div class="text-slate-500">Python (OpenAI SDK) 示例代码:</div>
-            <pre class="p-3 bg-slate-900 text-slate-200 rounded-xl text-[11px] overflow-x-auto"><code>from openai import OpenAI
+            <pre v-if="activeLanguage === 'python'" class="p-4 bg-slate-950 text-slate-200 rounded-2xl text-[11px] overflow-x-auto border border-slate-800 leading-relaxed"><code>from openai import OpenAI
 
 client = OpenAI(
-  api_key="sk-sub2api-your-key",
-  base_url="https://core.cnfcloud.com/v1"
+    api_key="sk-sub2api-your-api-key",
+    base_url="https://core.cnfcloud.com/v1"
 )
+
 response = client.chat.completions.create(
-  model="{{ targetModel?.id }}",
-  messages=[{"role": "user", "content": "Hello!"}]
-)</code></pre>
+    model="{{ targetModel?.id }}",
+    messages=[{"role": "user", "content": "你好，请自我介绍！"}]
+)
+print(response.choices[0].message.content)</code></pre>
           </div>
         </div>
 
         <div class="flex justify-between items-center pt-2">
-          <button @click="copySnippet" class="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold text-xs hover:bg-blue-500 transition-colors">
-            {{ copySuccessNotice ? '✓ 已复制代码片段' : '📋 复制请求代码' }}
+          <button @click="copyCodeSnippet" class="px-5 py-2.5 bg-[#6e29f6] hover:bg-[#581cd6] text-white rounded-xl font-bold text-xs shadow-md shadow-purple-500/20 transition-all">
+            {{ copyCodeNotice ? '✓ 已复制代码' : '📋 复制请求代码' }}
           </button>
-          <button @click="isModalOpen = false" class="px-4 py-2 bg-slate-100 dark:bg-dark-700 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs">
+          <button @click="isModalOpen = false" class="px-4 py-2.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl font-bold text-xs">
             关闭
           </button>
         </div>
+
       </div>
     </div>
 
@@ -237,5 +350,12 @@ response = client.chat.completions.create(
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+.custom-scrollbar::-webkit-scrollbar {
+  height: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(110, 41, 246, 0.3);
+  border-radius: 10px;
 }
 </style>

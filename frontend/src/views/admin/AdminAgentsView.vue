@@ -11,6 +11,87 @@ const activeTab = ref<'list' | 'audit' | 'commission'>('list')
 const searchQuery = ref('')
 const statusFilter = ref('')
 
+interface PoolQuotaConfig {
+  concurrency: number
+  rpm_limit: number
+}
+
+// 可选专属号池列表及预设元数据
+const availablePools = [
+  { value: 'CNF 华东专属号池 A', desc: '128 Key 物理隔离号池', defaultConcurrency: 128, defaultRpm: 6000 },
+  { value: '华南 VIP 专线号池', desc: '64 Key 高速专线号池', defaultConcurrency: 64, defaultRpm: 3000 },
+  { value: '西南大模型专属池', desc: '32 Key 专属算力号池', defaultConcurrency: 32, defaultRpm: 1500 },
+  { value: '共享号池 Group-B', desc: '标准共享隔离号池', defaultConcurrency: 16, defaultRpm: 1000 }
+]
+
+// 辅助工具：获取代理商分配的号池列表
+const getAgentPools = (agent: any): string[] => {
+  if (Array.isArray(agent.pools) && agent.pools.length > 0) {
+    return agent.pools
+  }
+  if (agent.pool) {
+    return agent.pool.split(',').map((s: string) => s.trim()).filter(Boolean)
+  }
+  return ['未划拨号池']
+}
+
+// 辅助工具：获取代理商每个号池的独立流控限制
+const getAgentPoolConfigs = (agent: any): Record<string, PoolQuotaConfig> => {
+  if (agent && agent.poolConfigs && Object.keys(agent.poolConfigs).length > 0) {
+    return agent.poolConfigs
+  }
+  const pools = getAgentPools(agent)
+  const configs: Record<string, PoolQuotaConfig> = {}
+  pools.forEach(p => {
+    const meta = availablePools.find(item => item.value === p)
+    configs[p] = {
+      concurrency: agent.concurrency || meta?.defaultConcurrency || 64,
+      rpm_limit: agent.rpm_limit || meta?.defaultRpm || 3000
+    }
+  })
+  return configs
+}
+
+// 判断表单中号池是否被勾选
+const isPoolSelected = (form: any, poolValue: string) => {
+  return form && Array.isArray(form.pools) && form.pools.includes(poolValue)
+}
+
+// 切换号池勾选状态
+const togglePoolSelection = (form: any, poolValue: string) => {
+  if (!form) return
+  if (!Array.isArray(form.pools)) form.pools = []
+  if (!form.poolConfigs) form.poolConfigs = {}
+
+  const idx = form.pools.indexOf(poolValue)
+  if (idx !== -1) {
+    form.pools.splice(idx, 1)
+  } else {
+    form.pools.push(poolValue)
+    if (!form.poolConfigs[poolValue]) {
+      const meta = availablePools.find(p => p.value === poolValue)
+      form.poolConfigs[poolValue] = {
+        concurrency: meta?.defaultConcurrency || 64,
+        rpm_limit: meta?.defaultRpm || 3000
+      }
+    }
+  }
+}
+
+// 获取/初始化单个号池的配置引用
+const getSinglePoolConfig = (form: any, poolValue: string): PoolQuotaConfig => {
+  if (!form) return { concurrency: 64, rpm_limit: 3000 }
+  if (!form.poolConfigs) form.poolConfigs = {}
+  if (!form.poolConfigs[poolValue]) {
+    const meta = availablePools.find(p => p.value === poolValue)
+    form.poolConfigs[poolValue] = {
+      concurrency: meta?.defaultConcurrency || 64,
+      rpm_limit: meta?.defaultRpm || 3000
+    }
+  }
+  return form.poolConfigs[poolValue]
+}
+
 // 模拟代理商列表数据 (对齐 sub2api User / AdminUser 数据结构)
 const agentList = ref([
   {
@@ -21,15 +102,18 @@ const agentList = ref([
     level: '一级代理',
     balance: 125000.00,
     frozen_balance: 0.00,
-    concurrency: 128,
-    rpm_limit: 6000,
     status: 'active',
-    pool: 'CNF 华东专属号池 A',
-    group_rate: 1.25,
+    pool: 'CNF 华东专属号池 A, 华南 VIP 专线号池',
+    pools: ['CNF 华东专属号池 A', '华南 VIP 专线号池'],
+    poolConfigs: {
+      'CNF 华东专属号池 A': { concurrency: 128, rpm_limit: 6000 },
+      '华南 VIP 专线号池': { concurrency: 64, rpm_limit: 3000 }
+    },
+    group_rate: 1.00,
     usersCount: 142,
     aff_code: 'CNF-EAST-888',
     link: 'https://core.cnfcloud.com/register?aff=CNF-EAST-888',
-    notes: '华东大区总代，拥有 128Key 专属号池物理隔离',
+    notes: '华东大区总代，拥有专属号池物理隔离与按号池独立控制流控配额',
     created_at: '2026-01-15 10:00:00',
     last_active_at: '2026-08-04 14:20:10'
   },
@@ -41,11 +125,13 @@ const agentList = ref([
     level: '一级代理',
     balance: 86400.50,
     frozen_balance: 0.00,
-    concurrency: 64,
-    rpm_limit: 3000,
     status: 'active',
     pool: '华南 VIP 专线号池',
-    group_rate: 1.30,
+    pools: ['华南 VIP 专线号池'],
+    poolConfigs: {
+      '华南 VIP 专线号池': { concurrency: 64, rpm_limit: 3000 }
+    },
+    group_rate: 1.00,
     usersCount: 89,
     aff_code: 'SOUTH-AI-666',
     link: 'https://core.cnfcloud.com/register?aff=SOUTH-AI-666',
@@ -61,11 +147,13 @@ const agentList = ref([
     level: '一级代理',
     balance: 32000.00,
     frozen_balance: 0.00,
-    concurrency: 32,
-    rpm_limit: 1500,
     status: 'active',
     pool: '共享号池 Group-B',
-    group_rate: 1.15,
+    pools: ['共享号池 Group-B'],
+    poolConfigs: {
+      '共享号池 Group-B': { concurrency: 32, rpm_limit: 1500 }
+    },
+    group_rate: 1.00,
     usersCount: 35,
     aff_code: 'BJ-CLOUD-101',
     link: 'https://core.cnfcloud.com/register?aff=BJ-CLOUD-101',
@@ -81,11 +169,13 @@ const agentList = ref([
     level: '一级代理',
     balance: 450.00,
     frozen_balance: 0.00,
-    concurrency: 32,
-    rpm_limit: 1500,
     status: 'active',
     pool: '西南大模型专属池',
-    group_rate: 1.20,
+    pools: ['西南大模型专属池'],
+    poolConfigs: {
+      '西南大模型专属池': { concurrency: 32, rpm_limit: 1500 }
+    },
+    group_rate: 1.00,
     usersCount: 64,
     aff_code: 'CD-LLM-520',
     link: 'https://core.cnfcloud.com/register?aff=CD-LLM-520',
@@ -248,14 +338,26 @@ const isEditModalOpen = ref(false)
 const selectedAgent = ref<any>(null)
 
 const openEditModal = (agent: any) => {
-  selectedAgent.value = { ...agent }
+  const agentPools = getAgentPools(agent)
+  const agentConfigs = JSON.parse(JSON.stringify(getAgentPoolConfigs(agent)))
+  selectedAgent.value = {
+    ...agent,
+    group_rate: agent.group_rate ?? 1,
+    pools: [...agentPools],
+    poolConfigs: agentConfigs
+  }
   isEditModalOpen.value = true
 }
 
 const saveAgentConfig = () => {
   const index = agentList.value.findIndex(a => a.id === selectedAgent.value.id)
   if (index !== -1) {
-    agentList.value[index] = { ...selectedAgent.value }
+    const poolsArr = selectedAgent.value.pools && selectedAgent.value.pools.length > 0
+      ? selectedAgent.value.pools
+      : ['未划拨号池']
+    selectedAgent.value.pools = poolsArr
+    selectedAgent.value.pool = poolsArr.join(', ')
+    agentList.value[index] = JSON.parse(JSON.stringify(selectedAgent.value))
   }
   isEditModalOpen.value = false
 }
@@ -274,10 +376,11 @@ const newAgentForm = ref({
   username: '',
   email: '',
   balance: 100000.00,
-  concurrency: 64,
-  rpm_limit: 3000,
-  pool: 'CNF 华东专属号池 A',
-  group_rate: 1.20,
+  pools: ['CNF 华东专属号池 A'],
+  poolConfigs: {
+    'CNF 华东专属号池 A': { concurrency: 128, rpm_limit: 6000 }
+  } as Record<string, PoolQuotaConfig>,
+  group_rate: 1.0,
   notes: ''
 })
 
@@ -288,6 +391,10 @@ const submitAddAgent = () => {
   const randomCode = `${prefix}-${Math.floor(100 + Math.random() * 900)}`
   const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19)
   
+  const poolsArr = newAgentForm.value.pools && newAgentForm.value.pools.length > 0
+    ? newAgentForm.value.pools
+    : ['未划拨号池']
+
   const newAgent = {
     id: newId,
     username: newAgentForm.value.username,
@@ -296,11 +403,11 @@ const submitAddAgent = () => {
     level: '一级代理',
     balance: newAgentForm.value.balance,
     frozen_balance: 0.00,
-    concurrency: newAgentForm.value.concurrency,
-    rpm_limit: newAgentForm.value.rpm_limit,
     status: 'active' as const,
-    pool: newAgentForm.value.pool,
-    group_rate: newAgentForm.value.group_rate,
+    pool: poolsArr.join(', '),
+    pools: [...poolsArr],
+    poolConfigs: JSON.parse(JSON.stringify(newAgentForm.value.poolConfigs)),
+    group_rate: newAgentForm.value.group_rate ?? 1.0,
     usersCount: 0,
     aff_code: randomCode,
     link: `https://core.cnfcloud.com/register?aff=${randomCode}`,
@@ -320,7 +427,7 @@ const submitAddAgent = () => {
       type: 'tenant',
       balance: 5000.00,
       monthlyTokens: '1000 万 Tokens',
-      rate: newAgentForm.value.group_rate,
+      rate: newAgentForm.value.group_rate ?? 1.0,
       status: 'active',
       joinedAt: nowStr.slice(0, 10),
       expanded: false,
@@ -332,10 +439,11 @@ const submitAddAgent = () => {
     username: '',
     email: '',
     balance: 100000.00,
-    concurrency: 64,
-    rpm_limit: 3000,
-    pool: 'CNF 华东专属号池 A',
-    group_rate: 1.20,
+    pools: ['CNF 华东专属号池 A'],
+    poolConfigs: {
+      'CNF 华东专属号池 A': { concurrency: 128, rpm_limit: 6000 }
+    },
+    group_rate: 1.0,
     notes: ''
   }
   isAddModalOpen.value = false
@@ -635,9 +743,18 @@ const markPaid = (payout: any) => {
                   </span>
                 </td>
                 <td class="px-4 py-3 font-sans">
-                  <span class="px-2.5 py-0.5 bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 rounded-lg text-[10px] font-bold border border-blue-100">
-                    ⚡ {{ agent.pool }}
-                  </span>
+                  <div class="flex flex-col gap-1.5">
+                    <div 
+                      v-for="p in getAgentPools(agent)" 
+                      :key="p"
+                      class="px-2.5 py-1 bg-blue-50/90 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 rounded-xl text-[10px] font-bold border border-blue-100 dark:border-blue-900/40 flex items-center justify-between gap-2"
+                    >
+                      <span class="truncate">⚡ {{ p }}</span>
+                      <span class="font-mono text-[9px] text-blue-600 dark:text-blue-400 font-semibold shrink-0 bg-blue-100/60 dark:bg-blue-900/40 px-1.5 py-0.5 rounded-md">
+                        {{ getAgentPoolConfigs(agent)[p]?.concurrency || 64 }}并发 / {{ getAgentPoolConfigs(agent)[p]?.rpm_limit || 3000 }}RPM
+                      </span>
+                    </div>
+                  </div>
                 </td>
                 <td class="px-4 py-3">
                   <span class="font-bold text-slate-900 dark:text-white">{{ agent.group_rate.toFixed(2) }}x</span>
@@ -839,33 +956,72 @@ const markPaid = (payout: any) => {
             <input v-model.number="selectedAgent.balance" type="number" step="1000" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none font-mono" />
           </div>
 
-          <!-- 并发与 RPM 限制 -->
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">并发限制 (concurrency)</label>
-              <input v-model.number="selectedAgent.concurrency" type="number" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none font-mono" />
+          <!-- 划拨专属号池及独立流控配额 (多选与号池独立并发/RPM) -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700 dark:text-slate-300">划拨专属号池及独立流控配额 (allowed_groups & limits)</label>
+              <span class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">并发/RPM 限制按号池独立配置</span>
             </div>
-            <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">RPM 限制 (rpm_limit)</label>
-              <input v-model.number="selectedAgent.rpm_limit" type="number" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none font-mono" />
-            </div>
-          </div>
 
-          <!-- 划拨专属号池 -->
-          <div class="space-y-1">
-            <label class="font-bold text-slate-700 dark:text-slate-300">划拨专属号池 (allowed_groups)</label>
-            <select v-model="selectedAgent.pool" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none">
-              <option value="CNF 华东专属号池 A">CNF 华东专属号池 A (128 个 Key 物理隔离)</option>
-              <option value="华南 VIP 专线号池">华南 VIP 专线号池 (64 个 高速 Key)</option>
-              <option value="西南大模型专属池">西南大模型专属池 (32 个 Key)</option>
-              <option value="共享号池 Group-B">共享号池 Group-B (共享隔离)</option>
-            </select>
+            <div class="space-y-2">
+              <div 
+                v-for="p in availablePools" 
+                :key="p.value"
+                class="p-3 rounded-2xl border transition-all"
+                :class="isPoolSelected(selectedAgent, p.value) ? 'bg-blue-50/70 dark:bg-blue-900/20 border-blue-300 dark:border-blue-500/50 shadow-sm' : 'bg-slate-50 dark:bg-dark-900 border-slate-200 dark:border-dark-700 opacity-70'"
+              >
+                <div class="flex items-center justify-between">
+                  <label class="flex items-center gap-2 cursor-pointer text-xs font-bold select-none text-slate-800 dark:text-slate-200">
+                    <input 
+                      type="checkbox" 
+                      :checked="isPoolSelected(selectedAgent, p.value)"
+                      @change="togglePoolSelection(selectedAgent, p.value)"
+                      class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 shrink-0"
+                    />
+                    <span>⚡ {{ p.value }}</span>
+                    <span class="text-[10px] text-slate-400 font-normal">({{ p.desc }})</span>
+                  </label>
+                  
+                  <span v-if="isPoolSelected(selectedAgent, p.value)" class="text-[10px] px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold rounded-full">
+                    已划拨分配
+                  </span>
+                  <span v-else class="text-[10px] text-slate-400 font-normal">
+                    未划拨
+                  </span>
+                </div>
+
+                <!-- 勾选后展开该号池独立的并发限制与 RPM 限制配置框 -->
+                <div v-if="isPoolSelected(selectedAgent, p.value)" class="grid grid-cols-2 gap-3 mt-2.5 pt-2.5 border-t border-blue-100 dark:border-blue-900/40">
+                  <div class="space-y-1">
+                    <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400">号池并发限制 (concurrency)</label>
+                    <input 
+                      v-model.number="getSinglePoolConfig(selectedAgent, p.value).concurrency" 
+                      type="number" 
+                      class="w-full p-2 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none focus:border-blue-500"
+                      placeholder="128" 
+                    />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400">号池 RPM 限制 (rpm_limit)</label>
+                    <input 
+                      v-model.number="getSinglePoolConfig(selectedAgent, p.value).rpm_limit" 
+                      type="number" 
+                      class="w-full p-2 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none focus:border-blue-500"
+                      placeholder="6000" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- 专属加价倍率 -->
           <div class="space-y-1">
-            <label class="font-bold text-slate-700 dark:text-slate-300">专属溢价加价倍率 (group_rate)</label>
-            <input v-model.number="selectedAgent.group_rate" type="number" step="0.05" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none font-mono" />
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700 dark:text-slate-300">专属溢价加价倍率 (group_rate)</label>
+              <span class="text-[11px] text-slate-400">默认为 1 (代理商自主对客户加价)</span>
+            </div>
+            <input v-model.number="selectedAgent.group_rate" type="number" step="0.05" min="0.1" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none font-mono focus:border-blue-500" placeholder="1.0" />
           </div>
 
           <!-- 管理员备注 -->
@@ -919,37 +1075,79 @@ const markPaid = (payout: any) => {
             />
           </div>
 
-          <div class="grid grid-cols-3 gap-3">
-            <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">初始余额 (balance)</label>
-              <input v-model.number="newAgentForm.balance" type="number" step="1000" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
-            </div>
-            <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">并发 (concurrency)</label>
-              <input v-model.number="newAgentForm.concurrency" type="number" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
-            </div>
-            <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">RPM (rpm_limit)</label>
-              <input v-model.number="newAgentForm.rpm_limit" type="number" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
-            </div>
+          <!-- 初始余额划拨 -->
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700 dark:text-slate-300">初始余额划拨 (balance)</label>
+            <input v-model.number="newAgentForm.balance" type="number" step="1000" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none focus:border-blue-500" />
           </div>
 
-          <!-- 划拨专属号池 -->
-          <div class="space-y-1">
-            <label class="font-bold text-slate-700 dark:text-slate-300">划拨专属号池 (allowed_groups)</label>
-            <select v-model="newAgentForm.pool" class="w-full p-2.5 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs outline-none">
-              <option value="CNF 华东专属号池 A">CNF 华东专属号池 A (128 Key)</option>
-              <option value="华南 VIP 专线号池">华南 VIP 专线号池 (64 Key)</option>
-              <option value="西南大模型专属池">西南大模型专属池 (32 Key)</option>
-              <option value="共享号池 Group-B">共享号池 Group-B</option>
-            </select>
+          <!-- 划拨专属号池及独立流控配额 (多选与号池独立并发/RPM) -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="font-bold text-slate-700 dark:text-slate-300">划拨专属号池及独立流控配额 (allowed_groups & limits)</label>
+              <span class="text-[11px] text-blue-600 dark:text-blue-400 font-semibold">并发/RPM 限制按号池独立配置</span>
+            </div>
+
+            <div class="space-y-2">
+              <div 
+                v-for="p in availablePools" 
+                :key="p.value"
+                class="p-3 rounded-2xl border transition-all"
+                :class="isPoolSelected(newAgentForm, p.value) ? 'bg-blue-50/70 dark:bg-blue-900/20 border-blue-300 dark:border-blue-500/50 shadow-sm' : 'bg-slate-50 dark:bg-dark-900 border-slate-200 dark:border-dark-700 opacity-70'"
+              >
+                <div class="flex items-center justify-between">
+                  <label class="flex items-center gap-2 cursor-pointer text-xs font-bold select-none text-slate-800 dark:text-slate-200">
+                    <input 
+                      type="checkbox" 
+                      :checked="isPoolSelected(newAgentForm, p.value)"
+                      @change="togglePoolSelection(newAgentForm, p.value)"
+                      class="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 shrink-0"
+                    />
+                    <span>⚡ {{ p.value }}</span>
+                    <span class="text-[10px] text-slate-400 font-normal">({{ p.desc }})</span>
+                  </label>
+                  
+                  <span v-if="isPoolSelected(newAgentForm, p.value)" class="text-[10px] px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-bold rounded-full">
+                    已划拨分配
+                  </span>
+                  <span v-else class="text-[10px] text-slate-400 font-normal">
+                    未划拨
+                  </span>
+                </div>
+
+                <!-- 勾选后展开该号池独立的并发限制与 RPM 限制配置框 -->
+                <div v-if="isPoolSelected(newAgentForm, p.value)" class="grid grid-cols-2 gap-3 mt-2.5 pt-2.5 border-t border-blue-100 dark:border-blue-900/40">
+                  <div class="space-y-1">
+                    <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400">号池并发限制 (concurrency)</label>
+                    <input 
+                      v-model.number="getSinglePoolConfig(newAgentForm, p.value).concurrency" 
+                      type="number" 
+                      class="w-full p-2 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none focus:border-blue-500"
+                      placeholder="128" 
+                    />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[11px] font-semibold text-slate-600 dark:text-slate-400">号池 RPM 限制 (rpm_limit)</label>
+                    <input 
+                      v-model.number="getSinglePoolConfig(newAgentForm, p.value).rpm_limit" 
+                      type="number" 
+                      class="w-full p-2 bg-white dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono outline-none focus:border-blue-500"
+                      placeholder="6000" 
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- 初始加价倍率与备注 -->
           <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1">
-              <label class="font-bold text-slate-700 dark:text-slate-300">初始溢价倍率 (group_rate)</label>
-              <input v-model.number="newAgentForm.group_rate" type="number" step="0.05" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono" />
+              <div class="flex justify-between items-center">
+                <label class="font-bold text-slate-700 dark:text-slate-300">初始溢价倍率 (group_rate)</label>
+              </div>
+              <input v-model.number="newAgentForm.group_rate" type="number" step="0.05" min="0.1" class="w-full p-2 bg-slate-50 dark:bg-dark-900 border border-slate-200 dark:border-dark-700 rounded-xl text-xs font-mono focus:border-blue-500" placeholder="1.0" />
+              <div class="text-[10px] text-slate-400">默认 1 (由代理自行对其客户加价)</div>
             </div>
             <div class="space-y-1">
               <label class="font-bold text-slate-700 dark:text-slate-300">备注说明 (notes)</label>

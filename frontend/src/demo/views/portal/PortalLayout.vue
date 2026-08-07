@@ -29,41 +29,41 @@ const toggleAuth = () => {
 </script>
 
 <template>
-  <div :class="['portal-layout bg-slate-50 dark:bg-dark-900 text-slate-900 font-sans flex flex-col selection:bg-blue-100', isChatbotView ? 'h-screen overflow-hidden' : 'min-h-screen']">
+  <div :class="['portal-layout bg-slate-50 dark:bg-slate-950 text-slate-900 font-sans flex flex-col selection:bg-purple-100', isChatbotView ? 'h-screen overflow-hidden' : 'min-h-screen']">
     <DemoNavBar />
     
-    <!-- 官网内部专属导航（苹果高级灰白玻璃拟态风格） -->
-    <header class="bg-white/80 dark:bg-dark-800/80 backdrop-blur-xl border-b border-slate-200/70 dark:border-dark-700 sticky top-0 z-40 shrink-0">
+    <!-- 官网内部专属导航（硅基流动极光玻璃拟态风格） -->
+    <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-purple-100/80 dark:border-purple-900/30 sticky top-0 z-40 shrink-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         
         <!-- 左侧 Logo 标识 -->
         <router-link to="/demo/portal" class="flex items-center space-x-2.5 group">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 text-white flex items-center justify-center font-black text-sm shadow-md shadow-purple-500/30 group-hover:scale-105 transition-transform">
             S2A
           </div>
           <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
-            Sub2API <span class="text-slate-400 font-normal text-sm">| 聚合分发中台</span>
+            Sub2API <span class="text-purple-600 dark:text-purple-400 font-normal text-sm">| 硅基 AI 聚合分发</span>
           </span>
         </router-link>
 
-        <!-- 中间标题菜单导航 (首页, 模型广场, 定价方案, 网页对话机器人, 文档中心, 关于我们) -->
+        <!-- 中间标题菜单导航 -->
         <nav class="hidden md:flex items-center space-x-7 text-sm font-semibold">
-          <router-link to="/demo/portal" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors" active-class="text-blue-600 dark:text-blue-400 font-bold">首页</router-link>
-          <router-link to="/demo/portal/models" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors" active-class="text-blue-600 dark:text-blue-400 font-bold">模型广场</router-link>
-          <router-link to="/demo/portal/pricing" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors" active-class="text-blue-600 dark:text-blue-400 font-bold">定价方案</router-link>
+          <router-link to="/demo/portal" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" active-class="text-purple-600 dark:text-purple-400 font-bold">首页</router-link>
+          <router-link to="/demo/portal/models" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" active-class="text-purple-600 dark:text-purple-400 font-bold">模型广场</router-link>
+          <router-link to="/demo/portal/pricing" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" active-class="text-purple-600 dark:text-purple-400 font-bold">定价方案</router-link>
           
-          <!-- 网页对话机器人菜单（附带有吸引力的标签高亮） -->
+          <!-- 网页对话机器人菜单 -->
           <router-link 
             to="/demo/portal/chatbot" 
-            class="relative px-3 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-dark-700 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5"
-            active-class="bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-bold border border-blue-200/80 dark:border-blue-900/60"
+            class="relative px-3 py-1.5 rounded-xl hover:bg-purple-50 dark:hover:bg-purple-950/40 text-slate-700 dark:text-slate-200 transition-all flex items-center gap-1.5"
+            active-class="bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 font-bold border border-purple-200/80 dark:border-purple-800/60"
           >
             <span>🤖 网页对话机器人</span>
-            <span class="px-1.5 py-0.2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[9px] font-bold rounded-full animate-pulse">SaaS</span>
+            <span class="px-1.5 py-0.2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[9px] font-bold rounded-full animate-pulse shadow-sm shadow-purple-500/30">SaaS</span>
           </router-link>
 
-          <router-link to="/demo/portal/docs" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors" active-class="text-blue-600 dark:text-blue-400 font-bold">文档中心</router-link>
-          <router-link to="/demo/portal/about" class="text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors" active-class="text-blue-600 dark:text-blue-400 font-bold">关于我们</router-link>
+          <router-link to="/demo/portal/docs" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" active-class="text-purple-600 dark:text-purple-400 font-bold">文档中心</router-link>
+          <router-link to="/demo/portal/about" class="text-slate-600 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors" active-class="text-purple-600 dark:text-purple-400 font-bold">关于我们</router-link>
         </nav>
 
         <!-- 右上角：用户登录状态 Logo 头像与信息卡片 -->
@@ -73,10 +73,10 @@ const toggleAuth = () => {
           <div v-if="isLoggedIn" class="relative">
             <button 
               @click="isUserMenuOpen = !isUserMenuOpen"
-              class="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-100/80 dark:bg-dark-700 hover:bg-slate-200/80 dark:hover:bg-dark-600 border border-slate-200/70 dark:border-dark-600 rounded-2xl transition-all shadow-xs"
+              class="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-100/80 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/50 border border-slate-200/70 dark:border-slate-700 rounded-2xl transition-all shadow-xs"
             >
-              <!-- 苹果风格用户 Logo 头像 -->
-              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+              <!-- 硅基风格用户 Logo 头像 -->
+              <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-purple-500/30">
                 U
               </div>
               <div class="text-left text-xs hidden sm:block">
@@ -84,7 +84,7 @@ const toggleAuth = () => {
                   <span>{{ userProfile.name }}</span>
                   <span class="w-2 h-2 rounded-full bg-emerald-500" title="Sub2API Token 已连接"></span>
                 </div>
-                <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono leading-tight">
+                <div class="text-[10px] text-purple-600 dark:text-purple-400 font-mono leading-tight font-semibold">
                   {{ userProfile.tokensRemaining }}
                 </div>
               </div>
@@ -92,28 +92,28 @@ const toggleAuth = () => {
             </button>
 
             <!-- 用户下拉菜单卡片 -->
-            <div v-if="isUserMenuOpen" class="absolute right-0 top-12 z-50 w-64 bg-white dark:bg-dark-800 border border-slate-200 dark:border-dark-700 rounded-2xl shadow-2xl p-3 space-y-2 animate-fade-in text-xs">
-              <div class="p-2 bg-slate-50 dark:bg-dark-900 rounded-xl space-y-1 border border-slate-100 dark:border-dark-700">
+            <div v-if="isUserMenuOpen" class="absolute right-0 top-12 z-50 w-64 bg-white dark:bg-slate-900 border border-purple-100 dark:border-purple-900/40 rounded-2xl shadow-2xl p-3 space-y-2 animate-fade-in text-xs">
+              <div class="p-2 bg-purple-50/70 dark:bg-purple-950/50 rounded-xl space-y-1 border border-purple-100 dark:border-purple-900/40">
                 <div class="font-bold text-slate-900 dark:text-white">{{ userProfile.email }}</div>
-                <div class="text-[10px] text-slate-500 font-mono flex items-center justify-between">
+                <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center justify-between">
                   <span>账户余额: {{ userProfile.balance }}</span>
-                  <span class="px-1.5 py-0.2 bg-blue-100 text-blue-600 rounded font-bold">{{ userProfile.tier }}</span>
+                  <span class="px-1.5 py-0.2 bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 rounded font-bold">{{ userProfile.tier }}</span>
                 </div>
               </div>
 
               <div class="pt-1 space-y-1 text-slate-700 dark:text-slate-300 font-medium">
-                <router-link to="/demo/tenant/dashboard" class="p-2 hover:bg-slate-100 dark:hover:bg-dark-700 rounded-lg flex items-center justify-between transition-colors">
+                <router-link to="/demo/tenant/dashboard" class="p-2 hover:bg-purple-50 dark:hover:bg-purple-950/40 rounded-lg flex items-center justify-between transition-colors hover:text-purple-600">
                   <span>🏢 企业租户控制台</span>
                   <span>→</span>
                 </router-link>
-                <router-link to="/demo/tenant/keys" class="p-2 hover:bg-slate-100 dark:hover:bg-dark-700 rounded-lg flex items-center justify-between transition-colors">
+                <router-link to="/demo/tenant/keys" class="p-2 hover:bg-purple-50 dark:hover:bg-purple-950/40 rounded-lg flex items-center justify-between transition-colors hover:text-purple-600">
                   <span>🔑 API Key 凭证管理</span>
                   <span>→</span>
                 </router-link>
               </div>
 
-              <div class="pt-2 border-t border-slate-100 dark:border-dark-700">
-                <button @click="toggleAuth" class="w-full text-left p-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 rounded-lg font-bold transition-colors flex items-center justify-between">
+              <div class="pt-2 border-t border-slate-100 dark:border-slate-800">
+                <button @click="toggleAuth" class="w-full text-left p-2 text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg font-bold transition-colors flex items-center justify-between">
                   <span>🚪 模拟退出登录</span>
                   <span class="text-[10px] opacity-75">切换未登录</span>
                 </button>
@@ -123,10 +123,10 @@ const toggleAuth = () => {
 
           <!-- 未登录状态按钮 -->
           <div v-else class="flex items-center space-x-2">
-            <button @click="toggleAuth" class="px-4 py-1.5 rounded-full border border-slate-200 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-slate-100 transition-colors">
+            <button @click="toggleAuth" class="px-4 py-1.5 rounded-full border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold hover:bg-purple-50 dark:hover:bg-purple-950/40 transition-colors">
               登录账号
             </button>
-            <button @click="toggleAuth" class="px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-md shadow-blue-500/20">
+            <button @click="toggleAuth" class="px-4 py-1.5 rounded-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-xs font-bold transition-all shadow-md shadow-purple-500/25">
               免费注册
             </button>
           </div>

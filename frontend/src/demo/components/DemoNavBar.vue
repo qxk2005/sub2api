@@ -89,20 +89,20 @@ const portalMeta = computed(() => {
 </script>
 
 <template>
-  <div class="demo-nav-bar-container sticky top-0 z-50 shadow-2xs font-sans">
+  <div class="demo-nav-bar-container sticky top-0 z-50 font-sans">
     <!-- 顶部极简导航栏 -->
-    <div class="border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
+    <div class="border-b border-purple-100/80 dark:border-purple-900/30 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm">
       <div class="mx-auto flex max-w-[1440px] items-center justify-between px-4 py-2.5 sm:px-6">
         <!-- 左侧：返回 Home + Demo 标记 -->
         <div class="flex items-center space-x-3">
           <router-link
             to="/home"
-            class="flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-600 transition-all hover:bg-slate-100 hover:text-slate-900"
+            class="flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 transition-all hover:bg-purple-50 dark:hover:bg-purple-950/50 hover:text-purple-600 dark:hover:text-purple-300 border border-transparent hover:border-purple-200 dark:hover:border-purple-800/40"
           >
             <span>←</span>
             <span>返回 Home</span>
           </router-link>
-          <span class="rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 px-2.5 py-0.5 text-[10px] font-black tracking-wide text-white shadow-2xs">
+          <span class="rounded-full bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 px-3 py-0.5 text-[10px] font-black tracking-wide text-white shadow-md shadow-purple-500/20">
             DEMO
           </span>
         </div>
@@ -114,10 +114,10 @@ const portalMeta = computed(() => {
             :key="link.path"
             :to="link.path"
             :class="[
-              'flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all',
+              'flex items-center space-x-1.5 rounded-xl px-3 py-1.5 text-xs font-bold transition-all border',
               currentPortal === link.path
-                ? 'bg-slate-900 text-white shadow-sm'
-                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white border-transparent shadow-md shadow-purple-500/25'
+                : 'text-slate-600 dark:text-slate-300 border-transparent hover:bg-purple-50 dark:hover:bg-purple-950/40 hover:text-purple-600 dark:hover:text-purple-300'
             ]"
           >
             <span class="text-sm">{{ link.icon }}</span>
@@ -128,10 +128,10 @@ const portalMeta = computed(() => {
     </div>
 
     <!-- 高级版 PORTAL 身份指示 BANNER (在导航栏与下层内容之间) -->
-    <div v-if="portalMeta" :class="['w-full border-b backdrop-blur-md px-4 py-2.5 sm:px-6 transition-all duration-300', portalMeta.glowColor]">
+    <div v-if="portalMeta" :class="['w-full border-b backdrop-blur-md px-4 py-2.5 sm:px-6 transition-all duration-300 border-purple-100 dark:border-purple-900/30', portalMeta.glowColor]">
       <div class="mx-auto max-w-[1440px] flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div class="flex items-center space-x-3">
-          <span :class="['px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-2xs whitespace-nowrap', portalMeta.tagColor]">
+          <span :class="['px-2.5 py-0.5 rounded-full text-[10px] font-black tracking-wider uppercase border shadow-sm whitespace-nowrap', portalMeta.tagColor]">
             {{ portalMeta.levelBadge }}
           </span>
           <h2 class="text-sm sm:text-base font-black text-slate-900 dark:text-white truncate">
@@ -143,7 +143,7 @@ const portalMeta = computed(() => {
           <p class="hidden md:block text-[11px] text-slate-500 dark:text-slate-400 truncate max-w-xl">
             {{ portalMeta.desc }}
           </p>
-          <span class="px-3 py-1 bg-white/90 dark:bg-dark-800 rounded-full text-slate-800 dark:text-slate-200 font-bold border border-slate-200/80 text-[11px] shadow-2xs whitespace-nowrap">
+          <span class="px-3 py-1 bg-white/90 dark:bg-slate-900 rounded-full text-slate-800 dark:text-purple-200 font-bold border border-purple-200/80 dark:border-purple-800/50 text-[11px] shadow-sm whitespace-nowrap">
             {{ portalMeta.accentBadge }}
           </span>
         </div>

@@ -6,17 +6,19 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export const useDemoStore = defineStore('demo', () => {
-  // ============ 模型列表 Mock 数据 ============
+  // ============ 模型列表 Mock 数据 (对标 SiliconFlow 官方模型阵列) ============
   const models = ref([
-    { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', capability: ['文本', '视觉', '代码'], context: '128K', price: { input: 2.50, output: 10.00 }, badge: '热门', cover: '/covers/cover_gpt4o.svg' },
-    { id: 'gpt-4o-mini', name: 'GPT-4o Mini', provider: 'OpenAI', capability: ['文本', '代码'], context: '128K', price: { input: 0.15, output: 0.60 }, badge: '性价比', cover: '/covers/cover_gpt4o_mini.svg' },
-    { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', capability: ['文本', '视觉', '代码'], context: '200K', price: { input: 3.00, output: 15.00 }, badge: '最强代码', cover: '/covers/cover_claude35.svg' },
-    { id: 'claude-3-opus', name: 'Claude 3 Opus', provider: 'Anthropic', capability: ['文本', '视觉', '推理'], context: '200K', price: { input: 15.00, output: 75.00 }, badge: '', cover: '/covers/cover_claude3_opus.svg' },
-    { id: 'gemini-1-5-pro', name: 'Gemini 1.5 Pro', provider: 'Google', capability: ['文本', '视觉', '长文档'], context: '1M', price: { input: 1.25, output: 5.00 }, badge: '超长上下文', cover: '/covers/cover_gemini_pro.svg' },
-    { id: 'gemini-2-0-flash', name: 'Gemini 2.0 Flash', provider: 'Google', capability: ['文本', '代码'], context: '1M', price: { input: 0.10, output: 0.40 }, badge: '极速', cover: '/covers/cover_gemini_flash.svg' },
-    { id: 'deepseek-v3', name: 'DeepSeek V3', provider: 'DeepSeek', capability: ['文本', '代码', '推理'], context: '64K', price: { input: 0.27, output: 1.10 }, badge: '国产之光', cover: '/covers/cover_deepseek_v3.svg' },
-    { id: 'grok-3', name: 'Grok-3', provider: 'xAI', capability: ['文本', '推理'], context: '128K', price: { input: 3.00, output: 15.00 }, badge: '', cover: '/covers/cover_grok3.svg' },
-    { id: 'dall-e-3', name: 'DALL·E 3', provider: 'OpenAI', capability: ['图像生成'], context: '-', price: { input: 40.00, output: 0 }, badge: '图像', cover: '/covers/cover_dalle3.svg' },
+    { id: 'deepseek-ai/DeepSeek-R1', name: 'DeepSeek R1', provider: 'DeepSeek', category: 'LLM', capability: ['深度推理', '数学逻辑', '代码生成'], context: '64K', price: { input: 1.00, output: 4.00 }, badge: '🔥 顶级推理', isFree: false, releaseDate: '2026-01', cover: '/covers/cover_deepseek_v3.svg', desc: '强力 Reasoning 模型，媲美 OpenAI o1 的推理分析与数学解题能力' },
+    { id: 'deepseek-ai/DeepSeek-V3', name: 'DeepSeek V3', provider: 'DeepSeek', category: 'LLM', capability: ['通用文本', '多语言代码', '长文本'], context: '64K', price: { input: 0.27, output: 1.10 }, badge: '⚡ 国产之光', isFree: false, releaseDate: '2025-12', cover: '/covers/cover_deepseek_v3.svg', desc: '671B 参数 MoE 模型，极其强大的通用对话与代码能力' },
+    { id: 'Qwen/Qwen2.5-72B-Instruct', name: 'Qwen2.5 72B', provider: 'Qwen', category: 'LLM', capability: ['通义千问', '中文理解', 'Agent 决策'], context: '128K', price: { input: 0.00, output: 0.00 }, badge: '🎉 限时免费', isFree: true, releaseDate: '2025-11', cover: '/covers/cover_gpt4o.svg', desc: '阿里云开源旗舰级大语言模型，具备出色的中文理解与推理逻辑' },
+    { id: 'Qwen/Qwen2.5-Coder-32B-Instruct', name: 'Qwen2.5 Coder 32B', provider: 'Qwen', category: 'LLM', capability: ['全栈代码', 'SQL 生成', '代码重构'], context: '128K', price: { input: 0.00, output: 0.00 }, badge: '💻 代码专精', isFree: true, releaseDate: '2025-11', cover: '/covers/cover_gpt4o_mini.svg', desc: '专为编程设计的开源代码魔改模型，编程能力比肩顶级商业模型' },
+    { id: 'meta-llama/Meta-Llama-3.3-70B-Instruct', name: 'Llama 3.3 70B', provider: 'Meta', category: 'LLM', capability: ['英文高精', '指令遵循', '多轮对话'], context: '128K', price: { input: 1.20, output: 1.20 }, badge: '开源标杆', isFree: false, releaseDate: '2025-12', cover: '/covers/cover_grok3.svg', desc: 'Meta 最新开源旗舰 70B 模型，具备媲美 Llama 3.1 405B 的极致性能' },
+    { id: 'gpt-4o', name: 'GPT-4o', provider: 'OpenAI', category: 'LLM', capability: ['文本', '视觉', '代码'], context: '128K', price: { input: 2.50, output: 10.00 }, badge: '热门', isFree: false, releaseDate: '2025-05', cover: '/covers/cover_gpt4o.svg', desc: 'OpenAI 旗舰队旗舰多模态模型，支持图像理解与高精逻辑输出' },
+    { id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', provider: 'Anthropic', category: 'LLM', capability: ['文本', '视觉', '代码'], context: '200K', price: { input: 3.00, output: 15.00 }, badge: '最强代码', isFree: false, releaseDate: '2025-10', cover: '/covers/cover_claude35.svg', desc: 'Anthropic 业界顶尖模型，前端 UI 编写与复杂架构重构首选' },
+    { id: 'gemini-2-0-flash', name: 'Gemini 2.0 Flash', provider: 'Google', category: 'LLM', capability: ['文本', '代码', '极速响应'], context: '1M', price: { input: 0.10, output: 0.40 }, badge: '1M 上下文', isFree: false, releaseDate: '2026-01', cover: '/covers/cover_gemini_flash.svg', desc: 'Google 最新一代 2.0 系列 Flash 超高速模型，100 万 token 极简穿透' },
+    { id: 'black-forest-labs/FLUX.1-schnell', name: 'FLUX.1 Schnell', provider: 'BFL', category: 'Image', capability: ['文本生图', '二次元/写实', '极速渲染'], context: '-', price: { input: 0.05, output: 0.00 }, badge: '🎨 AI 绘图', isFree: false, releaseDate: '2025-08', cover: '/covers/cover_dalle3.svg', desc: 'Black Forest Labs 顶级生图模型，4步极速出图，画质极致唯美' },
+    { id: 'BAAI/bge-m3', name: 'BGE-M3 向量嵌入', provider: 'BAAI', category: 'Embedding', capability: ['多语言向量', 'Dense/Sparse', 'RAG 检索'], context: '8K', price: { input: 0.00, output: 0.00 }, badge: '⚡ 向量免费', isFree: true, releaseDate: '2025-06', cover: '/covers/cover_gpt4o_mini.svg', desc: '北京智源研究院出品，支持多语言、多粒度的极精向量语义匹配' },
+    { id: 'BAAI/bge-reranker-large', name: 'BGE Reranker Large', provider: 'BAAI', category: 'Embedding', capability: ['重排精打分', 'RAG 精选', '搜索重排'], context: '8K', price: { input: 0.00, output: 0.00 }, badge: '⚡ 重排免费', isFree: true, releaseDate: '2025-06', cover: '/covers/cover_gpt4o_mini.svg', desc: '用于知识库与 RAG 检索二次精打分与相关性重排的高精模型' }
   ])
 
   // ============ 套餐 Mock 数据 ============
@@ -209,13 +211,13 @@ export const useDemoStore = defineStore('demo', () => {
     { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.5', name: '运维与告警规则配置', route: '/admin/ops', status: 'fulfilled', desc: '失败率飙升或额度不足时发送多渠道通知告警', guide: '进入【运维监控 (/admin/ops)】配置通知 Webhook，当上游连续报错或余额耗尽时触发钉钉/飞书告警。' },
     { chapter: '2.8', chapterName: '2.8 上游号池与渠道管理', section: '2.8.6', name: '渠道健康度自动评分', route: '/admin/channels/monitor', status: 'fulfilled', desc: '根据延时与成功率自动打分，辅助自动降级选路', guide: '在【渠道监控】列表中查阅每个渠道的健康度 Score 分数（根据 P95 延迟与成功率动态算法实时计算）。' },
 
-    // 2.10 渠道代理与分销管理 (Agent)
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.1', name: '代理概览与邀请分销', route: '/demo/agent/dashboard', status: 'fulfilled', desc: '专属邀请链接、返佣阶梯与收益转化漏斗', guide: '进入【代理商控制台 (/demo/agent/dashboard)】，查看专属分销邀请链接、本月预估佣金及返佣阶梯规则。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.2', name: '专属隔离号池分配', route: '/demo/agent/pools', status: 'fulfilled', desc: '平台划拨的代理专属物理隔离号池与运行状态', guide: '进入【代理专属号池 (/demo/agent/pools)】，查阅平台为其分配的隔离号池资源（如 VIP 专属池、高并发 GPU 池）。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.3', name: '专属费率与多维度加价配置', route: '/demo/agent/pricing', status: 'fulfilled', desc: '支持针对直营用户与下级企业租户独立设置加价与号池底价穿透', guide: '进入【专属费率 (/demo/agent/pricing)】，为【直营个人用户】与【下级企业租户】分别设定独立加价率，并绑定号池底价算术测算利润。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.4', name: '阶梯返佣规则与分销大盘', route: '/demo/agent/dashboard', status: 'fulfilled', desc: '按销售额阶梯自动计算返佣比例', guide: '在【代理概览】中查阅当前的返佣阶梯（如 ¥0~5,000 为 8%，¥50,001+ 为 20%）及历史结算明细。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.5', name: '下级客户管理与维护', route: '/demo/agent/clients', status: 'fulfilled', desc: '维护下级企业租户与直营用户档案与消耗占比', guide: '进入【下级租户管理 (/demo/agent/clients)】与【直营用户 (/demo/agent/direct-users)】，查阅客户月度消耗与激活状态。' },
-    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.6', name: '双向结算与精准对账单', route: '/demo/agent/payouts', status: 'fulfilled', desc: '平台-代理 & 代理-下游客户双向自动对账大盘', guide: '进入【结算与双向对账 (/demo/agent/payouts)】，在 Tab 1 查看代理与平台的底层结算单，在 Tab 2 查看代理与下游客户的加价账单。' },
+    // 2.10 渠道代理与分销管理 (Platform Admin)
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.1', name: '代理账户审核与管理 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '代理申请审核、分级管理与专属邀请码划分', guide: '进入【代理商管理 (/admin/agents)】，在【代理商列表/审核】中查阅并审核提交申请的代理商，配置其代理级别与专属邀请码。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.2', name: '专属号池分配 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '在平台侧为代理划分独立物理隔离号池资源', guide: '在【代理商管理 (/admin/agents)】中选择目标代理商，在【专属号池】列中为其划拨独立的物理隔离号池资源（如 VIP 专属池、高并发 GPU 池）。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.3', name: '专属费率与差异化折扣配置 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '为代理配置差异化溢价率与组折扣比率', guide: '在【代理商管理 (/admin/agents)】中为代理商配置专属分组折率（如 1.20x 组率）与差异化基础加价倍率，实现平台对代理商的差异化定价。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.4', name: '返佣阶梯与分销大盘 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '全站代理商销售转化大盘与阶梯返佣比例设定', guide: '进入【代理商管理 (/admin/agents)】的【返佣与对账】Tab，查看全站代理商月度销售大盘、返佣阶梯规则及预估返佣金额。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.5', name: '代理下级客户追溯与开户 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '三级架构追溯：代理商 -> 下级企业租户 -> 成员用户/直营个人用户', guide: '在【代理商管理 (/admin/agents)】中展开目标代理商，穿透查看其绑定的三级下级客户（企业租户与直营个人用户）明细及用量分布。' },
+    { chapter: '2.10', chapterName: '2.10 渠道代理与分销管理', section: '2.10.6', name: '代理结算与对账单管理 (平台侧)', route: '/admin/agents', status: 'fulfilled', desc: '平台-代理双向自动对账与佣金提现审核结算', guide: '进入【代理商管理 (/admin/agents)】的【返佣与对账】页面，审核、发放代理佣金提现，并下载平台与代理商之间的双向自动对账单。' },
   ])
 
   // ============ Toast 通知 ============

@@ -180,8 +180,11 @@
     </header>
 
     <!-- Main Content -->
-    <main class="relative z-10 flex-1 px-6 py-16">
+    <main class="relative z-10 flex-1 px-6 py-8">
       <div class="mx-auto max-w-6xl">
+        <!-- NEW DEMO CENTER -->
+        <DemoCenterSection />
+
         <!-- Hero Section - Left/Right Layout -->
         <div class="mb-12 flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-16">
           <!-- Left: Text Content -->
@@ -350,9 +353,6 @@
             </p>
           </div>
         </div>
-
-        <!-- NEW DEMO CENTER -->
-        <DemoCenterSection />
 
         <!-- Supported Providers -->
         <div class="mb-8 text-center">

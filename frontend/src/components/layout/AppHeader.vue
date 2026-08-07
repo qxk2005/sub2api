@@ -26,7 +26,7 @@
         <!-- Return Home / Demo Center Entry -->
         <router-link
           to="/home"
-          class="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 transition-colors shadow-xs"
+          class="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold text-purple-700 bg-purple-50 hover:bg-purple-100 dark:bg-purple-950/60 dark:text-purple-300 dark:hover:bg-purple-900/60 transition-all border border-purple-200/70 dark:border-purple-800/50 shadow-xs"
           title="返回控制台首页重新选择入口"
         >
           <span>🏠</span>

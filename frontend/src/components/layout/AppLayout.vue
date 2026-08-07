@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-dark-950">
-    <!-- Background Decoration -->
-    <div class="pointer-events-none fixed inset-0 bg-mesh-gradient"></div>
+  <div class="min-h-screen bg-gradient-to-b from-[#f4f0ff]/80 via-[#f9f8ff] to-white dark:from-[#0c0919] dark:via-[#0b0e1b] dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans">
+    <!-- Background Decoration: SiliconFlow 标志性冰晶紫微风光罩 (彻底无绿) -->
+    <div class="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-200/30 via-violet-100/10 to-transparent dark:from-purple-900/20"></div>
 
     <!-- Sidebar -->
     <AppSidebar />
@@ -15,7 +15,7 @@
       <AppHeader />
 
       <!-- Main Content -->
-      <main class="p-4 md:p-6 lg:p-8">
+      <main class="p-4 md:p-6 lg:p-8 relative z-10">
         <slot />
       </main>
     </div>

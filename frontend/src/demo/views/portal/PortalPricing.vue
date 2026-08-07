@@ -29,32 +29,32 @@ const handlePay = () => {
 </script>
 
 <template>
-  <div class="portal-pricing pt-10 pb-24 bg-slate-50 dark:bg-dark-900 min-h-screen text-slate-900 dark:text-slate-100 font-sans">
+  <div class="portal-pricing pt-10 pb-24 bg-slate-50 dark:bg-slate-950 min-h-screen text-slate-900 dark:text-slate-100 font-sans">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
       
       <!-- 头部标题与计费周期 Toggle -->
       <div class="text-center space-y-4 max-w-3xl mx-auto">
-        <div class="inline-flex items-center space-x-2 bg-blue-100 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 px-3.5 py-1 rounded-full text-xs font-bold border border-blue-200 dark:border-blue-900/60 shadow-2xs">
+        <div class="inline-flex items-center space-x-2 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 px-3.5 py-1 rounded-full text-xs font-bold border border-purple-200/80 dark:border-purple-800/60 shadow-sm">
           <span>💳 2.4.4 阶梯定价方案与充值中心</span>
         </div>
-        <h1 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
-          灵活弹性计费，<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">支持月付/年付/按量</span>
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          灵活弹性计费，<span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600">支持月付/年付/按量</span>
         </h1>
         <p class="text-sm md:text-base text-slate-500 dark:text-slate-400">
           无论是个人独立开发者、中小型团队还是大型企业，Sub2API 均提供最具性价比的准入方案。
         </p>
 
         <!-- 计费周期 Toggle (年付 8 折) -->
-        <div class="inline-flex items-center p-1 bg-slate-200/80 dark:bg-dark-800 rounded-2xl text-xs font-bold shadow-inner">
+        <div class="inline-flex items-center p-1 bg-slate-200/80 dark:bg-slate-900 rounded-2xl text-xs font-bold shadow-inner border border-slate-200/60 dark:border-slate-800">
           <button 
             @click="billingCycle = 'monthly'"
-            :class="['px-4 py-1.5 rounded-xl transition-all', billingCycle === 'monthly' ? 'bg-white dark:bg-dark-700 text-blue-600 dark:text-blue-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400']"
+            :class="['px-4 py-1.5 rounded-xl transition-all', billingCycle === 'monthly' ? 'bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-300 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400']"
           >
             按月付费 (Monthly)
           </button>
           <button 
             @click="billingCycle = 'yearly'"
-            :class="['px-4 py-1.5 rounded-xl transition-all flex items-center gap-1', billingCycle === 'yearly' ? 'bg-blue-600 text-white shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400']"
+            :class="['px-4 py-1.5 rounded-xl transition-all flex items-center gap-1', billingCycle === 'yearly' ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white shadow-sm font-bold' : 'text-slate-600 dark:text-slate-400']"
           >
             <span>按年付费 (Yearly)</span>
             <span class="px-1.5 py-0.2 bg-amber-400 text-slate-950 rounded text-[9px]">8 折优惠</span>
@@ -68,12 +68,12 @@ const handlePay = () => {
           v-for="plan in demoStore.plans" 
           :key="plan.name" 
           :class="[
-            'bg-white dark:bg-dark-800 rounded-3xl p-8 border relative flex flex-col justify-between transition-all duration-300',
-            plan.recommended ? 'border-blue-500 dark:border-blue-500 shadow-xl shadow-blue-500/10 ring-2 ring-blue-500/20 scale-105 z-10' : 'border-slate-200/80 dark:border-dark-700 shadow-sm'
+            'bg-white/90 dark:bg-slate-900/90 rounded-3xl p-8 border relative flex flex-col justify-between transition-all duration-300 backdrop-blur-xl',
+            plan.recommended ? 'border-purple-500 dark:border-purple-500 shadow-xl shadow-purple-500/15 ring-2 ring-purple-500/20 scale-105 z-10' : 'border-slate-200/80 dark:border-slate-800 shadow-sm'
           ]"
         >
           <!-- 推荐徽章 -->
-          <div v-if="plan.recommended" class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[11px] font-bold px-4 py-1 rounded-full shadow-sm tracking-wider">
+          <div v-if="plan.recommended" class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-600 to-purple-600 text-white text-[11px] font-bold px-4 py-1 rounded-full shadow-md shadow-purple-500/30 tracking-wider">
             ★ 热门企事业首选
           </div>
 
@@ -92,15 +92,15 @@ const handlePay = () => {
             <!-- 功能清单对比 -->
             <ul class="space-y-3 mb-8 text-xs text-slate-600 dark:text-slate-300">
               <li class="flex items-center gap-2">
-                <span class="text-blue-500 font-bold">✓</span>
+                <span class="text-purple-600 font-bold">✓</span>
                 <span><strong>包含额度：</strong>{{ plan.quota }}</span>
               </li>
               <li class="flex items-center gap-2">
-                <span class="text-blue-500 font-bold">✓</span>
+                <span class="text-purple-600 font-bold">✓</span>
                 <span><strong>服务支持：</strong>{{ plan.support }}</span>
               </li>
               <li v-for="feature in plan.features" :key="feature" class="flex items-center gap-2">
-                <span class="text-blue-500 font-bold">✓</span>
+                <span class="text-purple-600 font-bold">✓</span>
                 <span>{{ feature }}</span>
               </li>
             </ul>
@@ -110,7 +110,7 @@ const handlePay = () => {
             @click="openPayModal(plan)"
             :class="[
               'w-full py-3 rounded-2xl font-bold text-xs transition-all shadow-sm',
-              plan.recommended ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/30' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800'
+              plan.recommended ? 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-md shadow-purple-500/25' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-purple-600 dark:hover:bg-purple-400 dark:hover:text-white'
             ]"
           >
             {{ typeof plan.price === 'number' ? '立即在线订阅 (2.4.4)' : '联系商务开通' }}
@@ -119,9 +119,9 @@ const handlePay = () => {
       </div>
 
       <!-- 渠道代理商引导卡片 -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-8 border border-slate-800 max-w-4xl mx-auto shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-purple-950 text-white rounded-3xl p-8 border border-purple-500/20 max-w-4xl mx-auto shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
         <div class="space-y-2">
-          <span class="px-2.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-400/30 rounded-lg text-xs font-mono font-bold">
+          <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-400/30 rounded-lg text-xs font-mono font-bold">
             🤝 渠道代理专区 (2.10)
           </span>
           <h3 class="text-xl font-bold">寻求建立二次转售代理商体系？</h3>
@@ -129,7 +129,7 @@ const handlePay = () => {
             加入 Sub2API 渠道代理伙伴计划。自主设定价格，专属号池隔离，享最高 20% 返佣。
           </p>
         </div>
-        <router-link to="/demo/agent" class="px-6 py-3 bg-white text-slate-900 hover:bg-slate-100 rounded-2xl font-bold text-xs transition-all whitespace-nowrap shadow-md">
+        <router-link to="/demo/agent" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-2xl font-bold text-xs transition-all whitespace-nowrap shadow-md shadow-purple-500/30">
           进入代理商控制台 →
         </router-link>
       </div>
@@ -154,7 +154,7 @@ const handlePay = () => {
             </div>
             <div class="flex justify-between">
               <span class="text-slate-500">应付金额:</span>
-              <span class="font-bold text-blue-600 text-sm">
+              <span class="font-bold text-[#6e29f6] text-sm">
                 {{ typeof selectedPlan?.price === 'number' ? (billingCycle === 'yearly' ? `¥ ${Math.floor(selectedPlan.price * 0.8 * 12)}` : `¥ ${selectedPlan.price}`) : '按量结算' }}
               </span>
             </div>
@@ -163,18 +163,18 @@ const handlePay = () => {
           <div class="space-y-2">
             <div class="font-bold text-slate-700 dark:text-slate-300">选择支付方式 (支持 Engine B 穿透核算):</div>
             <div class="grid grid-cols-2 gap-2">
-              <button class="p-3 border-2 border-blue-500 bg-blue-50/50 dark:bg-blue-950/40 rounded-xl text-left font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+              <button class="p-3 border-2 border-purple-500 bg-purple-50/60 dark:bg-purple-950/40 rounded-xl text-left font-bold text-[#6e29f6] dark:text-purple-300 flex items-center gap-2">
                 <span>💚</span>
                 <span>微信 / 支付宝</span>
               </button>
-              <button class="p-3 border border-slate-200 dark:border-dark-700 hover:border-blue-400 rounded-xl text-left font-bold text-slate-600 dark:text-slate-400 flex items-center gap-2">
+              <button class="p-3 border border-slate-200 dark:border-slate-800 hover:border-purple-300 rounded-xl text-left font-bold text-slate-600 dark:text-slate-400 flex items-center gap-2">
                 <span>💳</span>
                 <span>兑换码 / 积分卡</span>
               </button>
             </div>
           </div>
 
-          <button @click="handlePay" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-bold transition-all shadow-lg shadow-blue-600/25">
+          <button @click="handlePay" class="w-full py-3 bg-[#6e29f6] hover:bg-[#581cd6] text-white rounded-2xl font-bold transition-all shadow-md shadow-purple-500/25">
             确认调起支付
           </button>
         </div>
