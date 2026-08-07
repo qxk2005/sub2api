@@ -8,7 +8,7 @@
   <div class="portal-home bg-slate-50 dark:bg-slate-950 font-sans selection:bg-purple-100">
     <!-- Hero Section -->
     <section class="relative pt-24 pb-32 overflow-hidden">
-      <!-- 硅基流动极光装饰背景 -->
+      <!-- 极光装饰背景 -->
       <div class="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-slate-50 to-violet-50/30 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950/40 -z-10"></div>
       <div class="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[800px] h-[800px] bg-purple-600/10 rounded-full blur-3xl -z-10"></div>
       
@@ -18,7 +18,7 @@
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-purple-600"></span>
           </span>
-          <span>SiliconFlow 架构 ｜ V3.0 全新升级</span>
+          <span>Sub2API 极光架构 ｜ V3.0 全新升级</span>
         </div>
         
         <h1 class="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-8 leading-tight">

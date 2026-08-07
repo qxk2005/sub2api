@@ -109,8 +109,8 @@ const handlePay = () => {
           <button 
             @click="openPayModal(plan)"
             :class="[
-              'w-full py-3 rounded-2xl font-bold text-xs transition-all shadow-sm',
-              plan.recommended ? 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-md shadow-purple-500/25' : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-purple-600 dark:hover:bg-purple-400 dark:hover:text-white'
+              'w-full py-3 rounded-2xl font-bold text-xs transition-all shadow-xs',
+              plan.recommended ? 'bg-[#6e29f6] hover:bg-[#581cd6] text-white shadow-md shadow-purple-500/25' : 'bg-purple-50 hover:bg-purple-100 text-[#6e29f6] dark:bg-purple-950/60 dark:text-purple-300 dark:hover:bg-purple-900/60 border border-purple-200/80 dark:border-purple-800/40'
             ]"
           >
             {{ typeof plan.price === 'number' ? '立即在线订阅 (2.4.4)' : '联系商务开通' }}
@@ -118,18 +118,18 @@ const handlePay = () => {
         </div>
       </div>
 
-      <!-- 渠道代理商引导卡片 -->
-      <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-purple-950 text-white rounded-3xl p-8 border border-purple-500/20 max-w-4xl mx-auto shadow-xl flex flex-col md:flex-row justify-between items-center gap-6">
+      <!-- 渠道代理商引导卡片 (SiliconFlow 冰晶浅紫风，去除强黑底) -->
+      <div class="bg-gradient-to-r from-purple-50 via-violet-50/70 to-purple-100/60 dark:from-purple-950/50 dark:via-purple-900/30 dark:to-slate-900 text-slate-900 dark:text-white rounded-3xl p-8 border border-purple-200/80 dark:border-purple-800/50 max-w-4xl mx-auto shadow-xs flex flex-col md:flex-row justify-between items-center gap-6">
         <div class="space-y-2">
-          <span class="px-2.5 py-0.5 bg-purple-500/20 text-purple-300 border border-purple-400/30 rounded-lg text-xs font-mono font-bold">
+          <span class="px-2.5 py-0.5 bg-purple-100 dark:bg-purple-950 text-[#6e29f6] dark:text-purple-300 border border-purple-200 dark:border-purple-800/40 rounded-lg text-xs font-mono font-bold">
             🤝 渠道代理专区 (2.10)
           </span>
-          <h3 class="text-xl font-bold">寻求建立二次转售代理商体系？</h3>
-          <p class="text-xs text-slate-400">
+          <h3 class="text-xl font-black text-[#5622d6] dark:text-purple-300">寻求建立二次转售代理商体系？</h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 font-medium">
             加入 Sub2API 渠道代理伙伴计划。自主设定价格，专属号池隔离，享最高 20% 返佣。
           </p>
         </div>
-        <router-link to="/demo/agent" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white rounded-2xl font-bold text-xs transition-all whitespace-nowrap shadow-md shadow-purple-500/30">
+        <router-link to="/demo/agent" class="px-6 py-3 bg-[#6e29f6] hover:bg-[#581cd6] text-white rounded-2xl font-bold text-xs transition-all whitespace-nowrap shadow-md shadow-purple-500/25">
           进入代理商控制台 →
         </router-link>
       </div>

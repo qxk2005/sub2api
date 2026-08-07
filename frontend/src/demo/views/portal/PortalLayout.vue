@@ -32,7 +32,7 @@ const toggleAuth = () => {
   <div :class="['portal-layout bg-slate-50 dark:bg-slate-950 text-slate-900 font-sans flex flex-col selection:bg-purple-100', isChatbotView ? 'h-screen overflow-hidden' : 'min-h-screen']">
     <DemoNavBar />
     
-    <!-- 官网内部专属导航（硅基流动极光玻璃拟态风格） -->
+    <!-- 官网内部专属导航（紫罗兰极光玻璃拟态风格） -->
     <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-b border-purple-100/80 dark:border-purple-900/30 sticky top-0 z-40 shrink-0">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         
@@ -42,7 +42,7 @@ const toggleAuth = () => {
             S2A
           </div>
           <span class="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
-            Sub2API <span class="text-purple-600 dark:text-purple-400 font-normal text-sm">| 硅基 AI 聚合分发</span>
+            Sub2API <span class="text-purple-600 dark:text-purple-400 font-normal text-sm">| 企业级 AI 聚合分发</span>
           </span>
         </router-link>
 
@@ -75,7 +75,7 @@ const toggleAuth = () => {
               @click="isUserMenuOpen = !isUserMenuOpen"
               class="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-100/80 dark:bg-slate-800 hover:bg-purple-50 dark:hover:bg-purple-950/50 border border-slate-200/70 dark:border-slate-700 rounded-2xl transition-all shadow-xs"
             >
-              <!-- 硅基风格用户 Logo 头像 -->
+              <!-- 紫罗兰风格用户 Logo 头像 -->
               <div class="w-7 h-7 rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-indigo-600 text-white flex items-center justify-center font-bold text-xs shadow-sm shadow-purple-500/30">
                 U
               </div>

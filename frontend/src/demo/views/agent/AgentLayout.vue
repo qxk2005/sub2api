@@ -14,7 +14,7 @@ const demoStore = useDemoStore()
     <DemoNavBar />
     
     <div class="flex-1 flex overflow-hidden max-w-[1440px] w-full mx-auto">
-      <!-- 侧边栏菜单 (硅基流动风格紫罗兰极光侧栏) -->
+      <!-- 侧边栏菜单 (紫罗兰极光侧栏) -->
       <aside class="w-64 bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 border-r border-purple-100/80 dark:border-purple-900/30 flex flex-col h-[calc(100vh-53px)] sticky top-[53px] backdrop-blur-xl">
         <!-- 代理商信息头部 -->
         <div class="p-5 border-b border-purple-100/60 dark:border-purple-900/30 space-y-3">

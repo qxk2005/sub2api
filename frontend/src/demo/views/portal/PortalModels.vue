@@ -1,6 +1,6 @@
 <script setup lang="ts">
 /**
- * FRS V3.0 2.4.2 模型广场 (完全 1:1 精准对标硅基流动官方 https://siliconflow.cn/models 真实设计)
+ * FRS V3.0 2.4.2 模型广场 (精美紫罗兰冰晶 SaaS 极简设计)
  * 采用清爽冰晶紫白渐变背景、Hero 大胶囊搜索框、多维模型类型/应用场景 Pills 标签及精美纯白模型卡片
  */
 import { ref, computed } from 'vue'
@@ -66,7 +66,7 @@ const copyCodeSnippet = () => {
 <template>
   <div class="portal-models min-h-screen bg-gradient-to-b from-[#f3effe] via-[#f8f7ff] to-white dark:from-[#0d091e] dark:via-[#0c0f1d] dark:to-slate-950 text-slate-900 dark:text-slate-100 font-sans selection:bg-purple-200">
     
-    <!-- 1. 硅基流动 SiliconFlow 标志性 Header Hero 区域 (清爽紫白，无强黑) -->
+    <!-- 1. Header Hero 区域 (清爽紫白，无强黑) -->
     <div class="relative pt-12 pb-16 overflow-hidden">
       <!-- 柔和紫色背景 Floating Orbs 悬浮流光球 -->
       <div class="absolute top-10 left-1/4 w-72 h-72 bg-purple-300/30 dark:bg-purple-900/20 rounded-full blur-3xl pointer-events-none"></div>

@@ -41,14 +41,14 @@ const goAdminRoute = (item: { route: string; name: string; guide: string }) => {
 
 <template>
   <div class="demo-center-section mb-12 mt-2 py-10 md:py-14 bg-white/90 dark:bg-slate-900/90 rounded-3xl border border-purple-100 dark:border-purple-900/30 shadow-2xl shadow-purple-500/10 backdrop-blur-xl relative overflow-hidden">
-    <!-- 硅基流动极光背景流光 -->
+    <!-- 紫罗兰极光背景流光 -->
     <div class="absolute -top-40 -right-40 w-96 h-96 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
     <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-violet-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
     <div class="relative z-10 px-8 md:px-12">
       <div class="text-center mb-12">
         <span class="inline-block px-3.5 py-1 bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 rounded-full text-xs font-semibold tracking-wide mb-4 border border-purple-200/60 dark:border-purple-800/40 shadow-sm">
-          ✨ SiliconFlow 风格 ｜ FRS V3.4 验证演示
+          ✨ Sub2API 智能中台 ｜ FRS V3.4 验证演示
         </span>
         <h2 class="text-3xl md:text-4xl font-black text-[#5622d6] dark:text-purple-300 mb-4 tracking-tight">
           产品功能演示中心

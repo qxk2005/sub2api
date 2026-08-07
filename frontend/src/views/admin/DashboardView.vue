@@ -10,7 +10,7 @@
           <div>
             <h3 class="font-extrabold text-slate-900 dark:text-white text-sm flex items-center gap-2">
               <span>Sub2API 平台中央控制塔 (Level 1 Central Control)</span>
-              <span class="px-2 py-0.2 bg-purple-100 dark:bg-purple-950 text-[#6e29f6] dark:text-purple-300 text-[10px] rounded-full font-mono font-bold border border-purple-200 dark:border-purple-800/40">SiliconFlow 配色</span>
+              <span class="px-2 py-0.2 bg-purple-100 dark:bg-purple-950 text-[#6e29f6] dark:text-purple-300 text-[10px] rounded-full font-mono font-bold border border-purple-200 dark:border-purple-800/40">FRS V3.4 规范</span>
             </h3>
             <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">您正在体验系统管理员控制台。可随时点击右侧按钮返回控制台首页重新选择不同角色或门户入口。</p>
           </div>

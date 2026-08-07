@@ -177,29 +177,29 @@ const chatbotQuickPrompts = ['💬 简单对话', '💻 代码编写', '📄 文
 <template>
   <div class="desktop-client h-screen w-full bg-[url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center flex items-center justify-center p-4 md:p-8 overflow-hidden relative font-sans">
     
-    <!-- 桌面背景遮罩 -->
-    <div class="absolute inset-0 bg-slate-950/40 backdrop-blur-md"></div>
+    <!-- 桌面背景遮罩 (SiliconFlow 紫罗兰浅色微流光) -->
+    <div class="absolute inset-0 bg-purple-900/10 backdrop-blur-md"></div>
 
     <!-- 顶部返回退出提示 -->
-    <router-link to="/demo/portal" class="absolute top-4 left-4 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-xl text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-white transition-all border border-white/20 flex items-center">
+    <router-link to="/demo/portal" class="absolute top-4 left-4 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-xl text-xs font-bold text-slate-800 dark:text-slate-100 hover:bg-white transition-all border border-purple-200/50 flex items-center">
       <span class="mr-1.5 text-sm">←</span> 退出桌面客户端仿真
     </router-link>
 
-    <!-- 模拟 Windows/macOS 客户端主界面窗体 -->
+    <!-- 模拟 Windows/macOS 客户端主界面窗体 (SiliconFlow 紫白风格，去除强黑底) -->
     <div :class="[
-      'bg-slate-900/95 text-slate-100 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-slate-700/80 relative z-10 transition-all duration-300 backdrop-blur-2xl',
+      'bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-purple-200/80 dark:border-purple-800/60 relative z-10 transition-all duration-300 backdrop-blur-2xl',
       isMaximized ? 'w-full h-full rounded-none border-0' : 'w-[1100px] h-[720px]'
     ]">
       
       <!-- 窗口顶部标题栏 (Window Titlebar) -->
-      <div class="h-11 bg-slate-950/80 flex justify-between items-center px-4 border-b border-slate-800 select-none cursor-move">
+      <div class="h-11 bg-purple-50/80 dark:bg-purple-950/60 flex justify-between items-center px-4 border-b border-purple-100 dark:border-purple-900/40 select-none cursor-move">
         <div class="flex items-center space-x-3">
-          <div class="w-6 h-6 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-md">
+          <div class="w-6 h-6 bg-[#6e29f6] rounded-lg flex items-center justify-center text-xs font-bold text-white shadow-xs">
             S2
           </div>
           <div class="flex items-center gap-2">
-            <span class="text-xs font-bold tracking-wide text-slate-200">Sub2API Desktop Client</span>
-            <span class="px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full text-[10px] font-mono border border-blue-500/30">{{ currentVersion }}</span>
+            <span class="text-xs font-bold tracking-wide text-slate-800 dark:text-slate-200">Sub2API Desktop Client</span>
+            <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-950 text-[#6e29f6] dark:text-purple-300 rounded-full text-[10px] font-mono border border-purple-200 dark:border-purple-800/40 font-bold">{{ currentVersion }}</span>
           </div>
         </div>
 
